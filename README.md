@@ -29,7 +29,7 @@ O sistema contempla dois módulos principais: **Gerenciamento** (cadastro e cont
 | Guilherme |  |
 | Marialvo  |  |
 | Sara      | 25024107 |
-| Sophia    |  |
+| Sophia    | 25020335 |
 
 ---
 
