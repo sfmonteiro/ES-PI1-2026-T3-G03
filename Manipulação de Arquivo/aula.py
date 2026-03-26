@@ -4,7 +4,7 @@
 # w = write escrita
 # a = append
 # r = read
-
+import datetime
 
 #parametro 1: nome do arquivo // parametro 2 execução: w = write // parametro 3: a a linguagem para acentos etc
 # with open("aula.txt", "a", encoding="utf-8") as arq:                          #se nao existe, ele já cria o arquivo
@@ -16,11 +16,19 @@
 #     print(cont)             
 
 
-try:
-    with open("aula-teste.txt", "r", encoding="utf-8") as arq:
-        cont = arq.read
-        print(cont)
+# try:
+#     with open("aula-teste.txt", "r", encoding="utf-8") as arq:
+#         cont = arq.read
+#         print(cont)
 
-except FileNotFoundError:
-    print("Arquivo não encontrado")
-    with open("aula-teste.txt", "a", encoding="utf-8") as arq:
+# except FileNotFoundError:
+#     print("Arquivo não encontrado")
+#     with open("aula-teste.txt", "a", encoding="utf-8") as arq:
+
+        
+data_hora = datetime.datetime.now().strftime("[%y-%m-%d %H:%M:%S]")
+print(data_hora)
+
+
+with open("aula.txt", "a", encoding="utf-8") as arq:                          #se nao existe, ele já cria o arquivo
+    arq.write(f"{data_hora}\nABERTURA: Votação iniciada com sucesso. Total de votos zerado.")   

@@ -6,12 +6,16 @@ from colorama import init, Fore, Style                   #colorir terminal
 init(autoreset=True)                                     #inicializa o colorama e evita que ele continue após o print
 
 import mysql.connector                                  #banco de dados
+import datetime
+import time
+import os
+import random
 
 #===================================================================================================================
 #                                                 FUNÇOES
 #===================================================================================================================
 
-# PRINTS DE MENSAGENS POR TIPO/COR (SUCESSO, ERRO E ALERTA)
+# ============ PRINTS DE MENSAGENS POR TIPO/COR (SUCESSO, ERRO E ALERTA) ================
 
 def sucesso (texto):
     print(Style.BRIGHT + Fore.GREEN + "✅ SUCESSO:  " + texto)
@@ -21,6 +25,16 @@ def erro (texto):
 
 def alerta (texto):
     print(Style.BRIGHT + Fore.YELLOW + "⚠️  ALERTA:  " + texto)
+
+# =================== LOG DE OCORRENCIAS (ESCRITA EM ARQUIVO TXT) =======================
+
+data_hora = datetime.datetime.now().strftime("[%y-%m-%d %H:%M:%S]")
+print(data_hora)
+
+def log_zerezima():
+    with open("ocorrencias.txt", "a", encoding="utf-8") as arq:                          #se nao existe, ele já cria o arquivo
+        arq.write("\nABERTURA: Votação iniciada com sucesso. Total de votos zerado.")                                           #write precisa de um parametro de escrita
+         
 
 #===================================================================================================================
 #                                          CONEXAO COM BANCO DE DADOS
@@ -68,3 +82,5 @@ banner_votacao = f"""
 #===================================================================================================================
 #                                                INICIO DO CODIGO
 #===================================================================================================================
+
+
