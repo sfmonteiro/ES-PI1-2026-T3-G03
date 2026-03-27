@@ -25,10 +25,14 @@ import datetime
 #     print("Arquivo não encontrado")
 #     with open("aula-teste.txt", "a", encoding="utf-8") as arq:
 
-        
-data_hora = datetime.datetime.now().strftime("[%y-%m-%d %H:%M:%S]")
-print(data_hora)
 
+
+#=====================================================================================================
+#============================FUNÇÃO DE LOGS DE OCORRENCIAS============================================
+#=====================================================================================================
+
+data_hora = datetime.datetime.now().strftime("[%y-%m-%d %H:%M:%S]")
 
 with open("aula.txt", "a", encoding="utf-8") as arq:                          #se nao existe, ele já cria o arquivo
-    arq.write(f"{data_hora}\nABERTURA: Votação iniciada com sucesso. Total de votos zerado.")   
+    arq.write("\n------------------------------------------------------------------------------------------")
+    arq.write(f"\n{data_hora}\nABERTURA: Votação iniciada com sucesso. Total de votos zerado.")   

@@ -28,13 +28,33 @@ def alerta (texto):
 
 # =================== LOG DE OCORRENCIAS (ESCRITA EM ARQUIVO TXT) =======================
 
-data_hora = datetime.datetime.now().strftime("[%y-%m-%d %H:%M:%S]")
-print(data_hora)
+data_hora = datetime.datetime.now().strftime("[%y-%m-%d %H:%M:%S]")                 # data/hora atual formata com strftime
 
 def log_zerezima():
-    with open("ocorrencias.txt", "a", encoding="utf-8") as arq:                          #se nao existe, ele já cria o arquivo
-        arq.write("\nABERTURA: Votação iniciada com sucesso. Total de votos zerado.")                                           #write precisa de um parametro de escrita
-         
+    with open("ocorrencias.txt", "a", encoding="utf-8") as arq:
+        arq.write("\n------------------------------------------------------------------------------------------")
+        arq.write(f"\n{data_hora}\nABERTURA: Votação iniciada com sucesso. Total de votos zerado.")
+
+def log_acesso_negado():
+    with open("ocorrencias.txt", "a", encoding="utf-8") as arq:
+        arq.write("\n------------------------------------------------------------------------------------------")
+        arq.write(f"\n{data_hora}\nALERTA: Tentativa de acesso negado.")
+
+def log_voto_duplo():
+    with open("ocorrencias.txt", "a", encoding="utf-8") as arq:
+        arq.write("\n------------------------------------------------------------------------------------------")
+        arq.write(f"\n{data_hora}\nALERTA: Tentativa de voto duplo.")
+
+def log_voto_sucesso():
+    with open("ocorrencias.txt", "a", encoding="utf-8") as arq:
+        arq.write("\n------------------------------------------------------------------------------------------")
+        arq.write(f"\n{data_hora}\nSUCESSO: Voto realizado com sucesso.") 
+
+def log_encerramento():
+    with open("ocorrencias.txt", "a", encoding="utf-8") as arq:
+        arq.write("\n------------------------------------------------------------------------------------------")
+        arq.write(f"\n{data_hora}\nENCERRAMENTO: Votação finalizada com sucesso.")
+
 
 #===================================================================================================================
 #                                          CONEXAO COM BANCO DE DADOS
