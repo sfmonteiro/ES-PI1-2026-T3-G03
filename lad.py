@@ -15,7 +15,7 @@ import random
 #                                                 FUNÇOES
 #===================================================================================================================
 
-# ============ PRINTS DE MENSAGENS POR TIPO/COR (SUCESSO, ERRO E ALERTA) ================
+# =================== PRINTS DE MENSAGENS POR TIPO/COR (SUCESSO, ERRO E ALERTA) ====================
 
 def sucesso (texto):
     """
@@ -53,7 +53,7 @@ def alerta (texto):
     """
     print(Style.BRIGHT + Fore.YELLOW + "⚠️  ALERTA:  " + texto)
 
-# =================== LOG DE OCORRENCIAS (ESCRITA EM ARQUIVO TXT) =======================
+# =================== LOG DE OCORRENCIAS (ESCRITA EM ARQUIVO TXT E EXIBIÇÃO) =======================
 
 def agora():
     """
@@ -137,6 +137,28 @@ def log_encerramento():
         arq.write("\n------------------------------------------------------------------------------------------")
         arq.write(f"\n{agora()}\nENCERRAMENTO: Votação finalizada com sucesso.")
 
+def exibir_logs():
+    """
+    Ele tenta (com try) exibir todos os logs registrados no arquivo txt. Se o arquivo não existir, ele cria um novo e mostra um alerta ao usuário.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
+    try:
+        with open("ocorrencias.txt", "r", encoding="utf-8") as arq:
+            logs = arq.read()
+            print(logs)
+
+    except FileNotFoundError:
+        with open("ocorrencias.txt", "a", encoding="utf-8") as arq:
+            # arq.write("\n=====================================================================================")
+            # arq.write(f"\n                      LAD.PY | LOG DE OCORRÊNCIAS CRÍTICAS")
+            # arq.write("\n=====================================================================================")
+            pass
+        alerta("\nArquivo de log criado. Nenhuma ocorrência registrada ainda.")
 
 #===================================================================================================================
 #                                          CONEXAO COM BANCO DE DADOS
