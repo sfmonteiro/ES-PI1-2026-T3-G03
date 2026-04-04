@@ -1,0 +1,5 @@
+                        # nome_completo = input("\nDigite seu nome completo:  ")
+                        # cpf = menu.input_validar_num("\nDigite seu CPF (apenas números):  ")
+                        # titulo = menu.input_validar_num("\nDigite seu Título de Eleitor (apenas números):  ")
+                        # mesario = int(menu.input_validar_num(f"\nÉ mesário?  {cor.verde('[1] SIM')}  {cor.vermelho('[2] NÃO')} :  "))
+                        # msg.sucesso("Cadastro realizado com sucesso!")

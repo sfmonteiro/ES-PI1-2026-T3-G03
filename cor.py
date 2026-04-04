@@ -5,44 +5,43 @@
 from colorama import init, Fore, Style                  # colorir terminal 
 init(autoreset=True)                                    # inicializa o colorama e evita que ele continue após o print
 
+
 #===================================================================================================================
-#                                                 MENSAGENS DE ALERTAS
+#                                                 CORES
 #===================================================================================================================
 
-def sucesso (texto):
+def verde(msg):
     """
-    Exibe uma mensagem de sucesso formatada em verde no terminal.
+    Retorna o texto formatado na cor verde e com estilo em negrito.
 
     Args:
         texto (str): Mensagem a ser exibida ao usuário.
 
     Returns:
-        None
+        Texto formatado com cor e estilo.
     """
-    print(Style.BRIGHT + Fore.GREEN + "\n✅ " + texto)
+    return f"{Fore.GREEN}{Style.BRIGHT}{msg}{Style.RESET_ALL}"
 
-
-def erro (texto):
+def vermelho(msg):
     """
-    Exibe uma mensagem de erro formatada em vermelho no terminal.
+    Retorna o texto formatado na cor vermelha e com estilo em negrito.
 
     Args:
         texto (str): Mensagem a ser exibida ao usuário.
 
     Returns:
-        None
+        Texto formatado com cor e estilo.
     """
-    print(Style.BRIGHT + Fore.RED + "\n❌ " + texto)
+    return f"{Fore.RED}{Style.BRIGHT}{msg}{Style.RESET_ALL}"
 
-
-def alerta (texto):
+def ciano(msg):
     """
-    Exibe uma mensagem de alerta formatada em amarela no terminal.
+    Retorna o texto formatado na cor ciano e com estilo em negrito.
 
     Args:
         texto (str): Mensagem a ser exibida ao usuário.
 
     Returns:
-        None
+        Texto formatado com cor e estilo.
     """
-    print(Style.BRIGHT + Fore.YELLOW + "\n⚠️  " + texto)
+    return f"{Fore.CYAN}{Style.BRIGHT}{msg}{Style.RESET_ALL}"
