@@ -21,10 +21,10 @@ while (op_mod != 0):
     op_mod = menu.selecionar_opcao()
 
     match op_mod:
-
+        
+        #=================== MENU MODULO GERENCIAMENTO ====================
         case 1:
 
-            #=================== MENU MODULO GERENCIAMENTO ====================
             op_ger = -1
 
             while (op_ger != 0):
@@ -38,7 +38,7 @@ while (op_mod != 0):
                         print(cor.ciano("\n█▓▒▒░░░ CADASTRO DO ELEITOR ░░░▒▒▓█"))
                         msg.alerta("[Cadastro do eleitor]")
 
-                    #=================== MENU ELEITORES ====================
+                    #=================== ELEITORES (GERENCIAR) ====================
                     case 2:
                         op_ger_eleitores = -1
 
@@ -70,17 +70,32 @@ while (op_mod != 0):
                                                 msg.alerta("Voltando para o menu anterior...")
                                             case _:
                                                 msg.erro("Opção inválida.")
+                                
+                                #=================== MENU LISTAR TODOS OS ELEITORES ====================
                                 case 2:
                                     msg.alerta("[Listar todos os eleitores cadastrados]")
+
                                 case 0:
                                     msg.alerta("Voltando ao módulo de Gerenciamento...")
+
                                 case _:
                                     msg.erro("Opção inválida.")
-
-
 
                     case 0:
                         msg.alerta("Voltando à seleção dos módulos...")
                     case _:
                         msg.erro("Opção inválida.")
-                        
+
+        #=================== MENU MODULO VOTAÇÃO ====================
+        case 2:
+            msg.alerta("[modulo votação]")
+        
+        case 0:
+            msg.alerta("Encerrando o programa...")
+            break
+
+        case _:
+            msg.erro("Opção inválida.")
+
+        
+                    

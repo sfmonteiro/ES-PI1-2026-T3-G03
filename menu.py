@@ -114,6 +114,7 @@ def input_validar_num(mensagem):
             return int(valor)
         msg.alerta("Digite apenas números.")
 
+
 def selecionar_opcao ():
     """
     Solicita ao usuário a escolha de uma opção do menu
