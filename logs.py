@@ -15,7 +15,31 @@ def agora():
     Returns:
         str: Data e hora no formato [YYYY-MM-DD HH:MM:SS].
     """
-    return datetime.datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")                 
+    return datetime.datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")    
+
+def inicializar_logs():
+    """
+    Verifica se o arquivo de logs 'ocorrencias.txt' existe.
+
+    Caso não exista, cria o arquivo com o cabeçalho padrão do sistema e exibe uma mensagem de sucesso ao usuário.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
+    try:
+        with open("ocorrencias.txt", "r", encoding="utf-8") as arq:
+            pass
+
+    except FileNotFoundError:
+        with open("ocorrencias.txt", "w", encoding="utf-8") as arq:
+            arq.write("\n=====================================================================================")
+            arq.write(f"\n                      LAD.PY | LOG DE OCORRÊNCIAS CRÍTICAS")
+            arq.write("\n=====================================================================================")
+
+        msg.sucesso("\nArquivo 'ocorrências.txt' criado com sucesso!")
 
 def log_zerezima():
     """
@@ -89,7 +113,7 @@ def log_encerramento():
 
 def exibir_logs():
     """
-    Ele tenta (com try) exibir todos os logs registrados no arquivo txt. Se o arquivo não existir, ele cria um novo e mostra um alerta ao usuário.
+    Exibe no terminal o conteúdo completo do arquivo 'ocorrencias.txt'.
 
     Args:
         Nenhum.
@@ -97,15 +121,6 @@ def exibir_logs():
     Returns:
         None.
     """
-    try:
-        with open("ocorrencias.txt", "r", encoding="utf-8") as arq:
-            logs = arq.read()
-            print(logs)
-
-    except FileNotFoundError:
-        with open("ocorrencias.txt", "a", encoding="utf-8") as arq:
-            # arq.write("\n=====================================================================================")
-            # arq.write(f"\n                      LAD.PY | LOG DE OCORRÊNCIAS CRÍTICAS")
-            # arq.write("\n=====================================================================================")
-            pass
-        msg.alerta("\nArquivo de log criado. Nenhuma ocorrência registrada ainda.")
+    with open("ocorrencias.txt", "r", encoding="utf-8") as arq:
+        logs = arq.read()
+        print(logs)

@@ -14,7 +14,7 @@ conexao = mysql.connector.connect (
     port = 3306,
     user = "root",
     password = "1234",
-    database = "bd_ladpy"
+    database = "LAD_Py"
 )
 
 if conexao.is_connected():
@@ -35,6 +35,22 @@ cursor = conexao.cursor()
 #          2. READ
 #================================
 
+def listar_candidatos():
+    cursor.execute("SELECT NumeroCandidato, NomeCandidato, PartidoCandidato FROM Candidatos ORDER BY NomeCandidato")
+    candidatos = cursor.fetchall()
+    
+    if not candidatos:
+        msg.alerta("Nenhum candidato cadastrado.")
+        return
+    
+    print("\n")
+    
+    for candidato in candidatos:
+        numero, nome, partido = candidato
+        print(f"[{numero}] {nome} | {partido}")
+    
+    print("\n")
+    
 
 #================================
 #          3. UPDATE
@@ -44,3 +60,7 @@ cursor = conexao.cursor()
 #================================
 #          4. DELETE
 #================================
+
+
+
+listar_candidatos()

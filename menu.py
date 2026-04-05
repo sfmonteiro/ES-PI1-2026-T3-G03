@@ -29,6 +29,7 @@ modulo = f"""
 
 [1]  GERENCIAMENTO
 [2]  VOTAÇÃO
+{Fore.RED}{Style.BRIGHT}[0]  ENCERRAR SISTEMA LAD.PY
 """
 
 #===================================================================================================================
@@ -70,11 +71,11 @@ vot_menu = f"""
 [1]  ABRIR SISTEMA DE VOTAÇÃO
 [2]  AUDITORIA DO SISTEMA DE VOTAÇÃO
 [3]  RESULTADO DA VOTAÇÃO
+{Fore.RED}{Style.BRIGHT}[0]  VOLTAR
 """
 vot_menu_votacao = f"""
 [1]  VOTAR
 [2]  ENCERRAR SISTEMA DE VOTAÇÃO
-{Fore.RED}{Style.BRIGHT}[0]  VOLTAR
 """
 
 vot_menu_auditoria = f"""
