@@ -4,6 +4,7 @@
 
 import mysql.connector                                  # banco de dados
 import msg                                              # documento msg.py com as mensagens de alerta
+import cor
 
 #===================================================================================================================
 #                                          CONEXAO COM BANCO DE DADOS
@@ -36,6 +37,15 @@ cursor = conexao.cursor()
 #================================
 
 def listar_candidatos():
+    """
+    Lista todos os candidatos cadastrados no banco de dados.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None
+    """
     cursor.execute("SELECT NumeroCandidato, NomeCandidato, PartidoCandidato FROM Candidatos ORDER BY NomeCandidato")
     candidatos = cursor.fetchall()
     
@@ -43,13 +53,12 @@ def listar_candidatos():
         msg.alerta("Nenhum candidato cadastrado.")
         return
     
-    print("\n")
-    
+    print(cor.magenta("\n█▓▒▒░░░    LISTAGEM DE CANDIDATOS    ░░░▒▒▓█\n"))
+
     for candidato in candidatos:
         numero, nome, partido = candidato
         print(f"[{numero}] {nome} | {partido}")
-    
-    print("\n")
+
     
 
 #================================
