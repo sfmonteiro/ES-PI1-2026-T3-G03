@@ -2,8 +2,6 @@
 #                                                 BIBLIOTECAS
 #===================================================================================================================
 
-from colorama import init, Fore, Style                  # colorir terminal 
-init(autoreset=True)                                    # inicializa o colorama e evita que ele continue após o print
 import msg
 import cor
 
@@ -13,23 +11,23 @@ import cor
 #===================================================================================================================
 
 banner_inicio = f"""
-{Fore.CYAN}{Style.BRIGHT}
+{cor.ciano("""
 ██╗      █████╗ ██████╗    ██████╗ ██╗   ██╗
 ██║     ██╔══██╗██╔══██╗   ██╔══██╗╚██╗ ██╔╝
 ██║     ███████║██║  ██║   ██████╔╝ ╚████╔╝ 
 ██║     ██╔══██║██║  ██║   ██╔═══╝   ╚██╔╝  
 ███████╗██║  ██║██████╔╝██╗██║        ██║   
-╚══════╝╚═╝  ╚═╝╚═════╝ ╚═╝╚═╝        ╚═╝   
-{Fore.GREEN}{Style.BRIGHT}
- █▓▒▒░░░ SISTEMA DE VOTAÇÃO DIGITAL ░░░▒▒▓█
+╚══════╝╚═╝  ╚═╝╚═════╝ ╚═╝╚═╝        ╚═╝ 
+""")}
+{cor.azul("█▓▒▒░░░ SISTEMA DE VOTAÇÃO DIGITAL ░░░▒▒▓█")}
 """
 
 modulo = f"""
-{cor.ciano("█▓▒▒░░░ MÓDULOS DO SISTEMA ░░░▒▒▓█")}
+{cor.verde("█▓▒▒░░░ MÓDULOS DO SISTEMA ░░░▒▒▓█")}
 
 [1]  GERENCIAMENTO
 [2]  VOTAÇÃO
-{Fore.RED}{Style.BRIGHT}[0]  ENCERRAR SISTEMA LAD.PY
+{cor.vermelho("[0]  ENCERRAR SISTEMA LAD.PY")}
 """
 
 #===================================================================================================================
@@ -37,25 +35,26 @@ modulo = f"""
 #===================================================================================================================
 
 ger_menu = f"""
-{Fore.CYAN}
+{cor.verde("""
 █▀▀ █▀▀ █▀█ █▀▀ █▄░█ █▀▀ █ ▄▀█ █▀▄▀█ █▀▀ █▄░█ ▀█▀ █▀█
 █▄█ ██▄ █▀▄ ██▄ █░▀█ █▄▄ █ █▀█ █░▀░█ ██▄ █░▀█ ░█░ █▄█
-{Style.RESET_ALL}
+""")}
+
 [1]  CADASTRAR NOVO ELEITOR
 [2]  ELEITORES
-{Fore.RED}{Style.BRIGHT}[0]  VOLTAR
+{cor.vermelho("[0]  VOLTAR")}
 """
 
 ger_menu_eleitores = f"""
 [1]  BUSCAR ELEITORES POR CPF/TÍTULO
 [2]  LISTAR TODOS OS ELEITORES
-{Fore.RED}{Style.BRIGHT}[0]  VOLTAR
+{cor.vermelho("[0]  VOLTAR")}
 """
 
 ger_menu_eleitores_opcao = f"""
 [1]  EDITAR ELEITOR
 [2]  REMOVER ELEITOR
-{Fore.RED}{Style.BRIGHT}[0]  VOLTAR
+{cor.vermelho("[0]  VOLTAR")}
 """
 
 
@@ -64,14 +63,15 @@ ger_menu_eleitores_opcao = f"""
 #===================================================================================================================
 
 vot_menu = f"""
-{Fore.CYAN}{Style.BRIGHT}
+{cor.verde("""
 █░█ █▀█ ▀█▀ ▄▀█ █▀▀ ▄▀█ █▀█
 ▀▄▀ █▄█ ░█░ █▀█ █▄▄ █▀█ █▄█
+""")}
 
 [1]  ABRIR SISTEMA DE VOTAÇÃO
 [2]  AUDITORIA DO SISTEMA DE VOTAÇÃO
 [3]  RESULTADO DA VOTAÇÃO
-{Fore.RED}{Style.BRIGHT}[0]  VOLTAR
+{cor.vermelho("[0]  VOLTAR")}
 """
 vot_menu_votacao = f"""
 [1]  VOTAR
@@ -81,7 +81,7 @@ vot_menu_votacao = f"""
 vot_menu_auditoria = f"""
 [1]  EXIBIR LOGS DE OCORRÊNCIAS
 [2]  EXIBIR PROTOCOLOS DA VOTAÇÃO
-{Fore.RED}{Style.BRIGHT}[0]  VOLTAR
+{cor.vermelho("[0]  VOLTAR")}
 """
 
 vot_menu_resultado = f"""
@@ -89,7 +89,7 @@ vot_menu_resultado = f"""
 [2]  ESTATÍSTICA DE COMPARECIMENTO
 [3]  VOTOS POR PARTIDO
 [4]  VALIDAÇÃO DA INTEGRIDADE DOS VOTOS
-{Fore.RED}{Style.BRIGHT}[0]  VOLTAR
+{cor.vermelho("[0]  VOLTAR")}
 """
 
 #===================================================================================================================

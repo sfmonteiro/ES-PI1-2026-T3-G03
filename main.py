@@ -5,6 +5,7 @@ import menu
 import msg
 import cor
 import logs
+import bd
 from colorama import init, Fore, Style                  # colorir terminal 
 init(autoreset=True)                                    # inicializa o colorama e evita que ele continue após o print
 
@@ -88,6 +89,7 @@ while (op_mod != 0):
                     case _:
                         msg.erro("Opção inválida.")
 
+        #=================== MODULO VOTAÇÃO ====================
         case 2:
             op_vot = -1
 
@@ -102,13 +104,16 @@ while (op_mod != 0):
                         op_votacao = 0
 
                         while (op_votacao != 2):
-                            print(cor.ciano("\n█▓▒▒░░░ ABRIR SISTEMA DE VOTAÇÃO ░░░▒▒▓█"))
+                            print(cor.azul("\n█▓▒▒░░░ ABRIR SISTEMA DE VOTAÇÃO ░░░▒▒▓█"))
                             print(menu.vot_menu_votacao)
                             op_votacao = menu.selecionar_opcao()
 
                             match op_votacao:
                                 case 1:
+                                    msg.sucesso("[Zerézima] realizada!")
+                                    bd.listar_candidatos()
                                     msg.alerta("[Votar]")
+
                                 case 2:
                                     msg.alerta("[Encerrar votação]")
                                 case _:
@@ -160,4 +165,9 @@ while (op_mod != 0):
                         msg.alerta("Voltando à seleção dos módulos...")
                     case _:
                         msg.erro("Opção inválida.")
-                        
+        
+        case 0:
+            msg.alerta("Encerrando o programa LAD.PY...")
+
+        case _:
+            msg.erro("Opção inválida.")

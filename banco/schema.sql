@@ -1,0 +1,10 @@
+USE LAD_Py;
+CREATE TABLE IF NOT EXISTS eleitores (
+    id_eleitor INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    titulo_eleitor VARCHAR(12) NOT NULL UNIQUE,
+    cpf VARCHAR(50) NOT NULL UNIQUE,
+    chave_acesso VARCHAR(50) NOT NULL,
+    is_mesario BOOLEAN NOT NULL DEFAULT FALSE,
+    status_voto BOOLEAN DEFAULT FALSE
+);

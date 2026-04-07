@@ -37,7 +37,7 @@ def inicializar_logs():
         with open("ocorrencias.txt", "w", encoding="utf-8") as arq:
             arq.write("\n=====================================================================================")
             arq.write(f"\n                      LAD.PY | LOG DE OCORRÊNCIAS CRÍTICAS")
-            arq.write("\n=====================================================================================")
+            arq.write("\n=====================================================================================\nl")
 
         msg.sucesso("\nArquivo 'ocorrências.txt' criado com sucesso!")
 
