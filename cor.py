@@ -34,6 +34,18 @@ def vermelho(msg):
     """
     return f"{Fore.RED}{Style.BRIGHT}{msg}{Style.RESET_ALL}"
 
+def amarelo(msg):
+    """
+    Retorna o texto formatado na cor vermelha e com estilo em negrito.
+
+    Args:
+        texto (str): Mensagem a ser exibida ao usuário.
+
+    Returns:
+        Texto formatado com cor e estilo.
+    """
+    return f"{Fore.YELLOW}{Style.BRIGHT}{msg}{Style.RESET_ALL}"
+
 def ciano(msg):
     """
     Retorna o texto formatado na cor ciano e com estilo em negrito.
