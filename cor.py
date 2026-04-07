@@ -45,3 +45,28 @@ def ciano(msg):
         Texto formatado com cor e estilo.
     """
     return f"{Fore.CYAN}{Style.BRIGHT}{msg}{Style.RESET_ALL}"
+
+
+def magenta(msg):
+    """
+    Retorna o texto formatado na cor magenta e com estilo em negrito.
+
+    Args:
+        texto (str): Mensagem a ser exibida ao usuário.
+
+    Returns:
+        Texto formatado com cor e estilo.
+    """
+    return f"{Fore.MAGENTA}{Style.BRIGHT}{msg}{Style.RESET_ALL}"
+
+def azul(msg):
+    """
+    Retorna o texto formatado na cor azul e com estilo em negrito.
+
+    Args:
+        texto (str): Mensagem a ser exibida ao usuário.
+
+    Returns:
+        Texto formatado com cor e estilo.
+    """
+    return f"{Fore.BLUE}{Style.BRIGHT}{msg}{Style.RESET_ALL}"
