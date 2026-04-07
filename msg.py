@@ -18,7 +18,7 @@ def sucesso (texto):
     Returns:
         None
     """
-    print({cor.verde("\n✅ " + texto)})
+    print(cor.verde("\n✅ " + texto))
 
 
 def erro (texto):
@@ -31,7 +31,7 @@ def erro (texto):
     Returns:
         None
     """
-    print({cor.vermelho("\n❌ " + texto)})
+    print(cor.vermelho("\n❌ " + texto))
 
 
 def alerta (texto):
@@ -44,4 +44,4 @@ def alerta (texto):
     Returns:
         None
     """
-    print({cor.amarelo("\n⚠️  " + texto)})
+    print(cor.amarelo("\n⚠️  " + texto))
