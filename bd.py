@@ -2,17 +2,12 @@
 #                           BIBLIOTECAS
 # =====================================================================
 
-<<<<<<< HEAD
 import mysql.connector
 from mysql.connector import Error, IntegrityError
 import msg
 from dotenv import load_dotenv
 import os
-=======
-import mysql.connector                                  # banco de dados
-import msg                                              # documento msg.py com as mensagens de alerta
 import cor
->>>>>>> main
 
 load_dotenv()
 
@@ -43,11 +38,6 @@ def conectar():
 # =====================================================================
 #                          CRUD - READ
 # =====================================================================
-
-def listar_candidatos():
-<<<<<<< HEAD
-    conexao = conectar()
-=======
     """
     Lista todos os candidatos cadastrados no banco de dados.
 
@@ -57,14 +47,10 @@ def listar_candidatos():
     Returns:
         None
     """
-    cursor.execute("SELECT NumeroCandidato, NomeCandidato, PartidoCandidato FROM Candidatos ORDER BY NomeCandidato")
-    candidatos = cursor.fetchall()
->>>>>>> main
-    
+def listar_candidatos():
+    conexao = conectar()
     if not conexao:
         return
-    
-<<<<<<< HEAD
     try:
         cursor = conexao.cursor()
 
@@ -81,12 +67,11 @@ def listar_candidatos():
             msg.alerta("Nenhum candidato cadastrado.")
             return
 
-        print("\n")
+        print(cor.magenta("\n█▓▒▒░░░    LISTAGEM DE CANDIDATOS    ░░░▒▒▓█\n"))
 
-        for numero, nome, partido in candidatos:
+        for candidato in candidatos:
+            numero, nome, partido = candidato
             print(f"[{numero}] {nome} | {partido}")
-
-        print("\n")
 
     except Error as erro:
         msg.alerta(f"Erro ao listar candidatos: {erro}")
@@ -165,14 +150,6 @@ def cadastrar_eleitor(nome, titulo, cpf, is_mesario, chave_acesso):
             cursor.close()
         if conexao and conexao.is_connected():
             conexao.close()
-=======
-    print(cor.magenta("\n█▓▒▒░░░    LISTAGEM DE CANDIDATOS    ░░░▒▒▓█\n"))
-
-    for candidato in candidatos:
-        numero, nome, partido = candidato
-        print(f"[{numero}] {nome} | {partido}")
-
->>>>>>> main
     
 
 # =====================================================================
@@ -181,4 +158,4 @@ def cadastrar_eleitor(nome, titulo, cpf, is_mesario, chave_acesso):
 
 if __name__ == "__main__":
     listar_eleitores()
-    cadastrar_eleitor("gabi", "654321", "44157014768", False, False)
+    cadastrar_eleitor("gabi", "6543218", "44157014765", False, False)
