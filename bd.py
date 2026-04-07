@@ -1,66 +1,155 @@
-#===================================================================================================================
-#                                                 BIBLIOTECAS
-#===================================================================================================================
+# =====================================================================
+#                           BIBLIOTECAS
+# =====================================================================
 
-import mysql.connector                                  # banco de dados
-import msg                                              # documento msg.py com as mensagens de alerta
+import mysql.connector
+from mysql.connector import Error, IntegrityError
+import msg
+from dotenv import load_dotenv
+import os
 
-#===================================================================================================================
-#                                          CONEXAO COM BANCO DE DADOS
-#===================================================================================================================
+load_dotenv()
 
-conexao = mysql.connector.connect (
-    host = "localhost",
-    port = 3306,
-    user = "root",
-    password = "1234",
-    database = "LAD_Py"
-)
+# =====================================================================
+#                      FUNÇÃO DE CONEXÃO
+# =====================================================================
 
-if conexao.is_connected():
-    msg.sucesso("Banco conectado com sucesso!")
+def conectar():
+    try:
+        conexao = mysql.connector.connect(
+            host=os.getenv("DB_HOST"),
+            port=int(os.getenv("DB_PORT")),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            database=os.getenv("DB_NAME")
+        )
 
-cursor = conexao.cursor()
+        if conexao.is_connected():
+            msg.sucesso("Banco conectado com sucesso!")
 
-#===================================================================================================================
-#                                         CRUD - CREATE, READ, UPDATE E DELETE
-#===================================================================================================================
+        return conexao
 
-#================================
-#          1. CREATE
-#================================
+    except Error as erro:
+        msg.alerta(f"Erro ao conectar: {erro}")
+        return None
 
 
-#================================
-#          2. READ
-#================================
+# =====================================================================
+#                          CRUD - READ
+# =====================================================================
 
 def listar_candidatos():
-    cursor.execute("SELECT NumeroCandidato, NomeCandidato, PartidoCandidato FROM Candidatos ORDER BY NomeCandidato")
-    candidatos = cursor.fetchall()
+    conexao = conectar()
     
-    if not candidatos:
-        msg.alerta("Nenhum candidato cadastrado.")
+    if not conexao:
         return
     
-    print("\n")
+    try:
+        cursor = conexao.cursor()
+
+        query = """
+        SELECT numero_candidato, nome_candidato, partido_candidato
+        FROM candidatos
+        ORDER BY nome_candidato
+        """
+
+        cursor.execute(query)
+        candidatos = cursor.fetchall()
+
+        if not candidatos:
+            msg.alerta("Nenhum candidato cadastrado.")
+            return
+
+        print("\n")
+
+        for numero, nome, partido in candidatos:
+            print(f"[{numero}] {nome} | {partido}")
+
+        print("\n")
+
+    except Error as erro:
+        msg.alerta(f"Erro ao listar candidatos: {erro}")
+
+    finally:
+        cursor.close()
+        conexao.close()
+        
+def listar_eleitores():
+    conexao = conectar()
     
-    for candidato in candidatos:
-        numero, nome, partido = candidato
-        print(f"[{numero}] {nome} | {partido}")
+    if not conexao:
+        return
     
-    print("\n")
+    try:
+        cursor = conexao.cursor()
+
+        query = """
+        SELECT *
+        FROM eleitores
+        """
+
+        cursor.execute(query)
+        eleitores = cursor.fetchall()
+        return eleitores
+
+    except Error as erro:
+        msg.alerta(f"Erro ao listar eleitores: {erro}")
+
+    finally:
+        cursor.close()
+        conexao.close()
+
+def cadastrar_eleitor(nome, titulo, cpf, is_mesario, chave_acesso):
+    conexao = conectar()
+
+    if not conexao:
+        return False
+
+    cursor = None
+
+    try:
+        cursor = conexao.cursor()
+
+        query = """
+        INSERT INTO eleitores
+        (nome, titulo_eleitor, cpf, chave_acesso, is_mesario, status_voto)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        """
+
+        valores = (
+            nome,
+            titulo,
+            cpf,              
+            chave_acesso,     
+            is_mesario,
+            False
+        )
+
+        cursor.execute(query, valores)
+        conexao.commit()
+
+        msg.sucesso("Eleitor cadastrado com sucesso!")
+        return True
+
+    except IntegrityError:
+        msg.alerta("CPF ou título de eleitor já cadastrado.")
+        return False
+
+    except Error as erro:
+        msg.alerta(f"Erro no banco: {erro}")
+        return False
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao and conexao.is_connected():
+            conexao.close()
     
 
-#================================
-#          3. UPDATE
-#================================
+# =====================================================================
+#                          EXECUÇÃO
+# =====================================================================
 
-
-#================================
-#          4. DELETE
-#================================
-
-
-
-listar_candidatos()
+if __name__ == "__main__":
+    listar_eleitores()
+    cadastrar_eleitor("gabi", "654321", "44157014768", False, False)
