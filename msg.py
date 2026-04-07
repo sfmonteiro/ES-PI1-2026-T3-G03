@@ -2,8 +2,7 @@
 #                                                 BIBLIOTECAS
 #===================================================================================================================
 
-from colorama import init, Fore, Style                  # colorir terminal 
-init(autoreset=True)                                    # inicializa o colorama e evita que ele continue após o print
+import cor
 
 #===================================================================================================================
 #                                                 MENSAGENS DE ALERTAS
@@ -19,7 +18,7 @@ def sucesso (texto):
     Returns:
         None
     """
-    print(Style.BRIGHT + Fore.GREEN + "\n✅ " + texto)
+    print({cor.verde("\n✅ " + texto)})
 
 
 def erro (texto):
@@ -32,7 +31,7 @@ def erro (texto):
     Returns:
         None
     """
-    print(Style.BRIGHT + Fore.RED + "\n❌ " + texto)
+    print({cor.vermelho("\n❌ " + texto)})
 
 
 def alerta (texto):
@@ -45,4 +44,4 @@ def alerta (texto):
     Returns:
         None
     """
-    print(Style.BRIGHT + Fore.YELLOW + "\n⚠️  " + texto)
+    print({cor.amarelo("\n⚠️  " + texto)})

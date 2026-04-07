@@ -16,6 +16,16 @@ load_dotenv()
 # =====================================================================
 
 def conectar():
+    """
+    Tenta realizar a conexão com o banco de dados MySQL usando variáveis de ambiente.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        conexao (mysql.connector.connection): Objeto de conexão ativo com o banco de dados.
+        None: Caso a conexão falhe.
+    """
     try:
         conexao = mysql.connector.connect(
             host=os.getenv("DB_HOST"),
@@ -38,8 +48,11 @@ def conectar():
 # =====================================================================
 #                          CRUD - READ
 # =====================================================================
+
+def listar_candidatos():
     """
-    Lista todos os candidatos cadastrados no banco de dados.
+    Lista todos os candidatos cadastrados no banco de dados,
+    exibindo número, nome e partido em ordem alfabética.
 
     Args:
         Nenhum.
@@ -47,10 +60,10 @@ def conectar():
     Returns:
         None
     """
-def listar_candidatos():
     conexao = conectar()
     if not conexao:
         return
+    
     try:
         cursor = conexao.cursor()
 
@@ -59,7 +72,6 @@ def listar_candidatos():
         FROM candidatos
         ORDER BY nome_candidato
         """
-
         cursor.execute(query)
         candidatos = cursor.fetchall()
 
@@ -77,12 +89,23 @@ def listar_candidatos():
         msg.alerta(f"Erro ao listar candidatos: {erro}")
 
     finally:
-        cursor.close()
-        conexao.close()
+        if cursor:
+            cursor.close()
+        if conexao and conexao.is_connected():
+            conexao.close()
         
 def listar_eleitores():
+    """
+    Lista todos os eleitores cadastrados no banco de dados.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        list: Lista de tuplas com os dados de todos os eleitores.
+        None: Se houver algum erro na consulta.
+    """
     conexao = conectar()
-    
     if not conexao:
         return
     
@@ -99,13 +122,29 @@ def listar_eleitores():
         return eleitores
 
     except Error as erro:
-        msg.alerta(f"Erro ao listar eleitores: {erro}")
+        msg.erro(f"Erro ao listar eleitores: {erro}")
 
     finally:
-        cursor.close()
-        conexao.close()
+        if cursor:
+            cursor.close()
+        if conexao and conexao.is_connected():
+            conexao.close()
 
 def cadastrar_eleitor(nome, titulo, cpf, is_mesario, chave_acesso):
+    """
+    Cadastra um eleitor no banco de dados com base nas variáveis inseridas.
+
+    Args:
+        nome (str): Nome completo do eleitor.
+        titulo (int): Título de eleitor.
+        cpf (int): CPF do eleitor.
+        is_mesario (bool): Indica se o eleitor é mesário.
+        chave_acesso (str): Chave de acesso gerada para o eleitor.
+
+    Returns:
+        True: Quando o eleitor é cadastrado com sucesso.
+        False: Quando há CPF ou título já cadastrado, ou quando há erro de conexão com o banco.
+    """
     conexao = conectar()
 
     if not conexao:
@@ -138,11 +177,11 @@ def cadastrar_eleitor(nome, titulo, cpf, is_mesario, chave_acesso):
         return True
 
     except IntegrityError:
-        msg.alerta("CPF ou título de eleitor já cadastrado.")
+        msg.erro("CPF ou título de eleitor já cadastrado.")
         return False
 
     except Error as erro:
-        msg.alerta(f"Erro no banco: {erro}")
+        msg.erro(f"Erro no banco: {erro}")
         return False
 
     finally:
