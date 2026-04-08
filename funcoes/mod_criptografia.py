@@ -7,6 +7,17 @@
 #                                            Módulo Criptografia
 #===================================================================================================================
 def cifrar(texto):
+    """
+    Solicita ao usuário a entrada de uma string alfanumérica.
+
+    A função é responsável por criptografar uma string alfanumérica.
+
+    Args:
+        texto (str): Recebe a string alfanumérica a ser criptografada.
+
+    Returns:
+        textonovo (str): Retorna uma string alfanumérica criptografada.
+    """
     alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     texto = texto.upper()
     textonovo = ""
@@ -34,6 +45,17 @@ def cifrar(texto):
     return textonovo
 
 def decifrar(texto, tamanho_original):
+    """
+    Solicita ao usuário a entrada de uma string alfanumérica.
+
+    A função é responsável por descriptografar uma string alfanumérica.
+
+    Args:
+        texto (str): Recebe a string alfanumérica criptografada.
+
+    Returns:
+        textonovo (str): Retorna uma string alfanumérica descriptografada.
+    """
     alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     texto = texto.upper()
     textonovo = ""
@@ -59,37 +81,3 @@ def decifrar(texto, tamanho_original):
         textonovo += alfabeto[novo2]
     
     return textonovo[:tamanho_original]
-
-while True:
-    print("\n1 - Cifrar")
-    print("2 - Decifrar")
-    print("3 - Sair")
-
-    opcao = input("Escolha uma opção: ")
-
-    if opcao == "1":
-        texto = input("Digite o texto para cifrar: ")
-        resultado = cifrar(texto)
-
-        if resultado == False:
-            print("Texto inválido.")
-        else:
-            print("Texto cifrado:", resultado)
-
-    elif opcao == "2":
-        texto = input("Digite o texto para decifrar: ")
-        tamanho_original = int(input("Digite o tamanho original do texto: "))
-
-        resultado = decifrar(texto, tamanho_original)
-
-        if resultado == False:
-            print("Texto inválido.")
-        else:
-            print("Texto decifrado:", resultado)
-
-    elif opcao == "3":
-        print("Encerrando...")
-        break
-
-    else:
-        print("Opção inválida.")
