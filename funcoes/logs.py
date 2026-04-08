@@ -2,7 +2,7 @@
 #                                                 BIBLIOTECAS
 #===================================================================================================================
 
-import msg
+from funcoes import msg
 import datetime                                         
 
 def agora():
