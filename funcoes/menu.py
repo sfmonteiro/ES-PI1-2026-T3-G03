@@ -58,6 +58,23 @@ def limpar_terminal():
     """
     os.system('cls' if os.name == 'nt' else 'clear')
 
+def mostrar_chave_acesso(chave):
+    """
+    Exibe a chave de aceso formada em uma caixa no terminal.
+
+    Args:
+        chave (str): chave a ser exibida.
+
+    Returns:
+        str: a própria chave de acesso.       
+    """
+    print(f"""
+╔════════════════════════════╗
+║          {chave}           ║
+╚════════════════════════════╝
+""")
+    
+
 
 #===================================================================================================================
 #                                        INICIO DO PROGRAMA E MODULO INICIAL
@@ -70,9 +87,11 @@ banner_inicio = f"""
 ██║     ███████║██║  ██║   ██████╔╝ ╚████╔╝ 
 ██║     ██╔══██║██║  ██║   ██╔═══╝   ╚██╔╝  
 ███████╗██║  ██║██████╔╝██╗██║        ██║   
-╚══════╝╚═╝  ╚═╝╚═════╝ ╚═╝╚═╝        ╚═╝ 
-""")}
-{cor.azul("█▓▒▒░░░ SISTEMA DE VOTAÇÃO DIGITAL ░░░▒▒▓█")}
+╚══════╝╚═╝  ╚═╝╚═════╝ ╚═╝╚═╝        ╚═╝ """)}
+{cor.azul("""
+╔══════════════════════════════════════════╗
+║        SISTEMA DE VOTAÇÃO DIGITAL        ║
+╚══════════════════════════════════════════╝""")}
 """
 
 modulo = f"""

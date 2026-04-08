@@ -12,8 +12,10 @@ from funcoes import bd
 #                                                 INÍCIO
 #===================================================================================================================
 
+menu.mostrar_chave_acesso("SFM1234")
 logs.inicializar_logs()
 print(menu.banner_inicio)
+
 
 #=================== MENU MODULO INICIAL ====================
 op_mod = -1
@@ -177,3 +179,7 @@ while (op_mod != 0):
 
         case _:
             msg.erro("Opção inválida.")
+
+
+
+
