@@ -11,9 +11,10 @@ from funcoes import bd
 #===================================================================================================================
 #                                                 INÍCIO
 #===================================================================================================================
+if __name__ == "__main__":
+    logs.zerezima()
 
 menu.mostrar_chave_acesso("SFM1234")
-logs.inicializar_logs()
 print(menu.banner_inicio)
 
 
@@ -113,6 +114,7 @@ while (op_mod != 0):
 
                         while (op_votacao != 2):
                             print(cor.azul("\n█▓▒▒░░░ ABRIR SISTEMA DE VOTAÇÃO ░░░▒▒▓█"))
+                            logs.zerezima()
                             print(menu.vot_menu_votacao)
                             op_votacao = menu.selecionar_opcao()
 
