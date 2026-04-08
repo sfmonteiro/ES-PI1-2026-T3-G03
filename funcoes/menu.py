@@ -2,8 +2,61 @@
 #                                                 BIBLIOTECAS
 #===================================================================================================================
 
-import msg
-import cor
+from funcoes import msg
+from funcoes import cor
+import os
+
+#===================================================================================================================
+#                                                FUNÇÕES AUXILIARES
+#===================================================================================================================
+
+def input_validar_num(mensagem):
+    """
+    Solicita ao usuário a entrada de um valor numérico inteiro.
+
+    A função continua solicitando a entrada até que o usuário digite
+    apenas números. Caso contrário, exibe uma mensagem de alerta.
+
+    Args:
+        mensagem (str): Texto exibido ao usuário no input.
+
+    Returns:
+        int: Valor numérico inteiro validado.
+    """
+    while True:
+        valor = input(mensagem).strip()
+        if valor.isdigit():
+            return int(valor)
+        msg.alerta("Digite apenas números.")
+
+
+def selecionar_opcao ():
+    """
+    Solicita ao usuário a escolha de uma opção do menu
+
+    A função utiliza input_validar_num para garantir que apenas valores numéricos sejam aceitos.
+
+    Args:
+        None
+
+    Returns:
+        int: Opção escolhida pelo usuário.
+
+    """
+    return input_validar_num("Selecione sua opção:  ")
+
+
+def limpar_terminal():
+    """
+    Limpa o terminal durante a execução para melhorar a experiência do usuário.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.        
+    """
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 #===================================================================================================================
@@ -92,41 +145,7 @@ vot_menu_resultado = f"""
 {cor.vermelho("[0]  VOLTAR")}
 """
 
-#===================================================================================================================
-#                                                FUNÇÕES AUXILIARES
-#===================================================================================================================
-
-def input_validar_num(mensagem):
-    """
-    Solicita ao usuário a entrada de um valor numérico inteiro.
-
-    A função continua solicitando a entrada até que o usuário digite
-    apenas números. Caso contrário, exibe uma mensagem de alerta.
-
-    Args:
-        mensagem (str): Texto exibido ao usuário no input.
-
-    Returns:
-        int: Valor numérico inteiro validado.
-    """
-    while True:
-        valor = input(mensagem).strip()
-        if valor.isdigit():
-            return int(valor)
-        msg.alerta("Digite apenas números.")
 
 
-def selecionar_opcao ():
-    """
-    Solicita ao usuário a escolha de uma opção do menu
 
-    A função utiliza input_validar_num para garantir que apenas valores numéricos sejam aceitos.
 
-    Args:
-        None
-
-    Returns:
-        int: Opção escolhida pelo usuário.
-
-    """
-    return input_validar_num("Selecione sua opção:  ")

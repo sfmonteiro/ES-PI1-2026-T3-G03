@@ -1,13 +1,12 @@
 #===================================================================================================================
 #                                                 BIBLIOTECAS
 #===================================================================================================================
-import menu
-import msg
-import cor
-import logs
-import bd
-from colorama import init, Fore, Style                  # colorir terminal 
-init(autoreset=True)                                    # inicializa o colorama e evita que ele continue após o print
+
+from funcoes import menu
+from funcoes import msg
+from funcoes import cor
+from funcoes import logs
+from funcoes import bd
 
 #===================================================================================================================
 #                                                 INÍCIO
@@ -31,6 +30,7 @@ while (op_mod != 0):
             op_ger = -1
 
             while (op_ger != 0):
+                menu.limpar_terminal()
                 print(menu.ger_menu)
                 op_ger = menu.selecionar_opcao()
 
@@ -38,6 +38,7 @@ while (op_mod != 0):
 
                     #=================== CADASTRAR ELEITOR ====================
                     case 1: 
+                        menu.limpar_terminal()
                         print(cor.ciano("\n█▓▒▒░░░ CADASTRO DO ELEITOR ░░░▒▒▓█"))
                         msg.alerta("[Cadastro do eleitor]")
 
@@ -46,6 +47,7 @@ while (op_mod != 0):
                         op_ger_eleitores = -1
 
                         while (op_ger_eleitores != 0):
+                            menu.limpar_terminal()
                             print(cor.ciano("\n█▓▒▒░░░      ELEITORES       ░░░▒▒▓█"))
                             print(menu.ger_menu_eleitores)
                             op_ger_eleitores = menu.selecionar_opcao()
@@ -54,11 +56,13 @@ while (op_mod != 0):
                                 
                                 #=================== MENU BUSCAR ELEITORES POR CPF OU TITULO ====================
                                 case 1:
+                                    menu.limpar_terminal()
                                     msg.alerta("[Digitar CPF ou Título]")
 
                                     op_editar_eleitor = -1
 
                                     while (op_editar_eleitor != 0):
+                                        menu.limpar_terminal()
                                         print(menu.ger_menu_eleitores_opcao)
                                         op_editar_eleitor = menu.selecionar_opcao()
 
@@ -66,8 +70,10 @@ while (op_mod != 0):
 
                                             #=================== MENU EDITAR ELEITOR ====================
                                             case 1:
+                                                menu.limpar_terminal()
                                                 msg.alerta("[Editar campos, talvez mais um while para cada opção]")
                                             case 2:
+                                                menu.limpar_terminal()
                                                 msg.alerta("[Remover eleitor]")
                                             case 0:
                                                 msg.alerta("Voltando para o menu anterior...")
@@ -124,7 +130,7 @@ while (op_mod != 0):
                         op_auditoria = -1
 
                         while (op_auditoria != 0):
-                            print(cor.ciano("\n█▓▒▒░░░ AUDITORIA DO SISTEMA DE VOTAÇÃO ░░░▒▒▓█"))
+                            print(cor.azul("\n█▓▒▒░░░ AUDITORIA DO SISTEMA DE VOTAÇÃO ░░░▒▒▓█"))
                             print(menu.vot_menu_auditoria)
                             op_auditoria = menu.selecionar_opcao()
 
@@ -143,7 +149,7 @@ while (op_mod != 0):
                         op_resultado = -1
 
                         while (op_resultado != 0):
-                            print(cor.ciano("\n█▓▒▒░░░ RESULTADO DA VOTAÇÃO ░░░▒▒▓█"))
+                            print(cor.azul("\n█▓▒▒░░░ RESULTADO DA VOTAÇÃO ░░░▒▒▓█"))
                             print(menu.vot_menu_resultado)
                             op_resultado = menu.selecionar_opcao()
 

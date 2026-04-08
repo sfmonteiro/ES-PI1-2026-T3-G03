@@ -4,10 +4,10 @@
 
 import mysql.connector
 from mysql.connector import Error, IntegrityError
-import msg
+import funcoes.msg as msg
 from dotenv import load_dotenv
 import os
-import cor
+import funcoes.cor as cor
 
 load_dotenv()
 
