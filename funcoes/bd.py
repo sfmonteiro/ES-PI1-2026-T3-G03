@@ -164,61 +164,6 @@ def listar_eleitores():
         if conexao and conexao.is_connected():
             conexao.close()
 
-def cadastrar_eleitor(nome, titulo, cpf, is_mesario):
-    """
-    Cadastra um eleitor, validando documentos e cifrando dados sensíveis.
-
-    Args:
-        nome (str): Nome completo do eleitor.
-        titulo (str): Título de eleitor (12 dígitos).
-        cpf (str): CPF do eleitor (11 dígitos).
-        is_mesario (bool): Indica se o eleitor atuará como mesário.
-
-    Returns:
-        bool: True para sucesso, False se houver erro de validação ou banco.
-    """
-    # Validação Matemática
-    if not validar_cpf(cpf) or not validar_titulo(titulo):
-        msg.erro("Documentos matematicamente inválidos!") 
-        return False
-
-    # Geração da Chave 
-    chave_bruta = gerar_chave_acesso(nome)
-
-    # Criptografia 
-    # RNF006: O CPF e a Chave DEVEM ser criptografados
-    cpf_cifrado = cifrar(cpf) 
-    chave_cifrada = cifrar(chave_bruta)
-
-    conexao = conectar()
-    if not conexao:
-        return False
-
-    try:
-        cursor = conexao.cursor()
-        # O banco cuida da unicidade de CPF e Título 
-        query = """
-        INSERT INTO eleitores 
-        (nome, titulo_eleitor, cpf, chave_acesso, is_mesario, status_voto) 
-        VALUES (%s, %s, %s, %s, %s, %s)
-        """
-        valores = (nome, titulo, cpf_cifrado, chave_cifrada, is_mesario, False)
-
-        cursor.execute(query, valores)
-        conexao.commit()
-
-        # Informar a chave IMEDIATAMENTE após o cadastro 
-        msg.sucesso(f"Eleitor cadastrado! CHAVE DE ACESSO: {chave_bruta}")
-        return True
-
-    except IntegrityError:
-        msg.erro("Erro: CPF ou Título já existem no sistema.") 
-        return False
-    finally:
-        if conexao.is_connected():
-            cursor.close()
-            conexao.close()
-
 # =====================================================================
 #                          EXECUÇÃO
 # =====================================================================
