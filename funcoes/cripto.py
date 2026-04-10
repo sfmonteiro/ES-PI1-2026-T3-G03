@@ -60,36 +60,36 @@ def decifrar(texto, tamanho_original):
     
     return textonovo[:tamanho_original]
 
-while True:
-    print("\n1 - Cifrar")
-    print("2 - Decifrar")
-    print("3 - Sair")
+# while True:
+#     print("\n1 - Cifrar")
+#     print("2 - Decifrar")
+#     print("3 - Sair")
 
-    opcao = input("Escolha uma opção: ")
+#     opcao = input("Escolha uma opção: ")
 
-    if opcao == "1":
-        texto = input("Digite o texto para cifrar: ")
-        resultado = cifrar(texto)
+#     if opcao == "1":
+#         texto = input("Digite o texto para cifrar: ")
+#         resultado = cifrar(texto)
 
-        if resultado == False:
-            print("Texto inválido.")
-        else:
-            print("Texto cifrado:", resultado)
+#         if resultado == False:
+#             print("Texto inválido.")
+#         else:
+#             print("Texto cifrado:", resultado)
 
-    elif opcao == "2":
-        texto = input("Digite o texto para decifrar: ")
-        tamanho_original = int(input("Digite o tamanho original do texto: "))
+#     elif opcao == "2":
+#         texto = input("Digite o texto para decifrar: ")
+#         tamanho_original = int(input("Digite o tamanho original do texto: "))
 
-        resultado = decifrar(texto, tamanho_original)
+#         resultado = decifrar(texto, tamanho_original)
 
-        if resultado == False:
-            print("Texto inválido.")
-        else:
-            print("Texto decifrado:", resultado)
+#         if resultado == False:
+#             print("Texto inválido.")
+#         else:
+#             print("Texto decifrado:", resultado)
 
-    elif opcao == "3":
-        print("Encerrando...")
-        break
+#     elif opcao == "3":
+#         print("Encerrando...")
+#         break
 
-    else:
-        print("Opção inválida.")
+#     else:
+#         print("Opção inválida.")

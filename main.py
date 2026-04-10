@@ -3,26 +3,30 @@
 #===================================================================================================================
 
 from funcoes import menu
+from funcoes import ger
 from funcoes import msg
 from funcoes import cor
 from funcoes import logs
 from funcoes import bd
+from funcoes import ger
+from funcoes import cripto
 
 #===================================================================================================================
-#                                                 INÍCIO
+#                                                     MAIN
 #===================================================================================================================
-if __name__ == "__main__":
-    logs.zerezima()
 
-menu.mostrar_chave_acesso("SFM1234")
+#=================== INICIO DO SISTEMA ====================
+menu.limpar_terminal()
 print(menu.banner_inicio)
-
+input(cor.amarelo(">> Pressione ENTER para iniciar o programa LAD.PY...  "))
 
 #=================== MENU MODULO INICIAL ====================
 op_mod = -1
 
 while (op_mod != 0):
-    print(menu.modulo)
+    menu.limpar_terminal()
+    menu.mostrar_modulos()
+  
     op_mod = menu.selecionar_opcao()
 
     match op_mod:
@@ -42,8 +46,23 @@ while (op_mod != 0):
                     #=================== CADASTRAR ELEITOR ====================
                     case 1: 
                         menu.limpar_terminal()
-                        print(cor.ciano("\n█▓▒▒░░░ CADASTRO DO ELEITOR ░░░▒▒▓█"))
-                        msg.alerta("[Cadastro do eleitor]")
+                        print(menu.ger_menu_cad_eleitores)
+
+                        dict_cadastro = ger.menu_cad_eleitor()
+                        chave_gerada = ger.gerar_chave_acesso(dict_cadastro['nome'])
+
+                        eleitor = bd.cadastrar_eleitor(
+                            dict_cadastro['nome'],
+                            cripto.cifrar(dict_cadastro['titulo_eleitor']),
+                            cripto.cifrar(dict_cadastro['cpf']),
+                            cripto.cifrar(chave_gerada),
+                            dict_cadastro['is_mesario']
+                            )
+                        if eleitor:
+                            msg.sucesso("Eleitor cadastrado com sucesso!")
+                            ger.mostrar_chave_acesso(chave_gerada)
+
+                        input(cor.amarelo(">> Pressione ENTER para continuar...  "))
 
                     #=================== ELEITORES (GERENCIAR) ====================
                     case 2:
@@ -51,7 +70,6 @@ while (op_mod != 0):
 
                         while (op_ger_eleitores != 0):
                             menu.limpar_terminal()
-                            print(cor.ciano("\n█▓▒▒░░░      ELEITORES       ░░░▒▒▓█"))
                             print(menu.ger_menu_eleitores)
                             op_ger_eleitores = menu.selecionar_opcao()
 
@@ -85,7 +103,10 @@ while (op_mod != 0):
                                 
                                 #=================== MENU LISTAR TODOS OS ELEITORES ====================
                                 case 2:
-                                    msg.alerta("[Listar todos os eleitores cadastrados]")
+                                    menu.limpar_terminal()
+                                    print(menu.ger_menu_list_eleitores)
+                                    bd.listar_eleitores()
+                                    input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
 
                                 case 0:
                                     msg.alerta("Voltando ao módulo de Gerenciamento...")
@@ -181,6 +202,8 @@ while (op_mod != 0):
 
         case _:
             msg.erro("Opção inválida.")
+        
+
 
 
 

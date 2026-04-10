@@ -69,9 +69,11 @@ def zerezima():
         nome_arquivo = f"logs{contador}.txt"
 
     with open(nome_arquivo, "w", encoding="utf-8") as arq:
-        arq.write("""╔════════════════════════════════════════════════════╗
+        arq.write("""
+╔════════════════════════════════════════════════════╗
 ║        LAD.PY | LOG DE OCORRÊNCIAS CRÍTICAS        ║
-╚════════════════════════════════════════════════════╝""")
+╚════════════════════════════════════════════════════╝
+""")
         arq.write("\n------------------------------------------------------------------------------------------")
         arq.write(f"\n{agora()}\nABERTURA: Votação iniciada com sucesso. Total de votos zerado.")
 

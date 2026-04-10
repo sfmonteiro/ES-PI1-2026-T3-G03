@@ -35,14 +35,48 @@ def conectar():
             database=os.getenv("DB_NAME")
         )
 
-        if conexao.is_connected():
-            msg.sucesso("Banco conectado com sucesso!")
-
         return conexao
 
     except Error as erro:
         msg.alerta(f"Erro ao conectar: {erro}")
         return None
+
+def listar_chaves_existente(chave_acesso):
+    """
+    Lista todas as chaves de acesso dos eleitores cadastrados no banco de dados.
+
+    Args:
+        chave_acesso (str): A chave de acesso a ser pesquisada.
+
+    Returns:
+        list: Lista de tuplas com os dados dos eleitores que possuem a chave de acesso especificada.
+        None: Se houver algum erro na consulta.
+    """
+    conexao = conectar()
+    if not conexao:
+        return True
+
+    try:
+        cursor = conexao.cursor()
+
+        query = """
+        SELECT *
+        FROM eleitores
+        WHERE chave_acesso = %s
+        """
+        cursor.execute(query, (chave_acesso,))
+        eleitores = cursor.fetchall()
+        return eleitores
+
+    except Error as erro:
+        msg.alerta(f"Erro ao listar chaves existentes: {erro}")
+        return None
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao and conexao.is_connected():
+            conexao.close()
 
 
 # =====================================================================
@@ -113,12 +147,17 @@ def listar_eleitores():
         cursor = conexao.cursor()
 
         query = """
-        SELECT *
+        SELECT nome, titulo_eleitor, cpf, is_mesario
         FROM eleitores
         """
 
         cursor.execute(query)
         eleitores = cursor.fetchall()
+
+        for eleitor in eleitores:
+            nome, titulo, cpf, is_mesario= eleitor
+            mesario = "SIM" if is_mesario == 1 else "NÃO"
+            print(f"{nome} | Título: {titulo} | CPF: {cpf} | Mesário: {mesario}")
         return eleitores
 
     except Error as erro:
@@ -130,7 +169,7 @@ def listar_eleitores():
         if conexao and conexao.is_connected():
             conexao.close()
 
-def cadastrar_eleitor(nome, titulo, cpf, is_mesario, chave_acesso):
+def cadastrar_eleitor(nome, titulo, cpf, chave_acesso, is_mesario):
     """
     Cadastra um eleitor no banco de dados com base nas variáveis inseridas.
 
@@ -146,12 +185,10 @@ def cadastrar_eleitor(nome, titulo, cpf, is_mesario, chave_acesso):
         False: Quando há CPF ou título já cadastrado, ou quando há erro de conexão com o banco.
     """
     conexao = conectar()
-
     if not conexao:
         return False
 
     cursor = None
-
     try:
         cursor = conexao.cursor()
 
@@ -161,20 +198,15 @@ def cadastrar_eleitor(nome, titulo, cpf, is_mesario, chave_acesso):
         VALUES (%s, %s, %s, %s, %s, %s)
         """
 
-        valores = (
-            nome,
-            titulo,
-            cpf,              
-            chave_acesso,     
-            is_mesario,
-            False
-        )
+        valores = (nome, titulo, cpf, chave_acesso, is_mesario, False)
 
         cursor.execute(query, valores)
         conexao.commit()
 
-        msg.sucesso("Eleitor cadastrado com sucesso!")
-        return True
+        if cursor.rowcount > 0:
+            return True
+        else:
+            return False
 
     except IntegrityError:
         msg.erro("CPF ou título de eleitor já cadastrado.")
@@ -189,7 +221,6 @@ def cadastrar_eleitor(nome, titulo, cpf, is_mesario, chave_acesso):
             cursor.close()
         if conexao and conexao.is_connected():
             conexao.close()
-    
 
 # =====================================================================
 #                          EXECUÇÃO

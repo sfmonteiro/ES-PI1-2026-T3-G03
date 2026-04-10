@@ -2,7 +2,7 @@
 #                                                 BIBLIOTECAS
 #===================================================================================================================
 
-from colorama import init, Fore, Style                  # colorir terminal 
+from colorama import init, Fore, Style, Back                 # colorir terminal 
 init(autoreset=True)                                    # inicializa o colorama e evita que ele continue após o print
 
 
@@ -82,3 +82,15 @@ def azul(msg):
         Texto formatado com cor e estilo.
     """
     return f"{Fore.BLUE}{Style.BRIGHT}{msg}{Style.RESET_ALL}"
+
+def preto(msg):
+    """
+    Retorna o texto formatado na cor preta com estilo mais fraco.
+
+    Args:
+        texto (str): Mensagem a ser exibida ao usuário.
+
+    Returns:
+        Texto formatado com cor e estilo.
+    """
+    return f"{Fore.BLACK}{Style.DIM}{msg}{Style.RESET_ALL}"
