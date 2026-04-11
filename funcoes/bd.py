@@ -253,8 +253,8 @@ def editar_eleitor(valor_busca, novos_dados):
         campos_permitidos = ["nome", "chave_acesso", "is_mesario"]
 
         # Se o nome mudou gera nova chave (AGUARDANDO FUNÇÃO DE GERER CHAVE)
-        # if "nome" in novos_dados and novos_dados["nome"] != nome_atual:
-        #     novos_dados["chave_acesso"] = gerar_chave_acesso(novos_dados["nome"])
+        if "nome" in novos_dados and novos_dados["nome"] != nome_atual:
+            novos_dados["chave_acesso"] = gerar_chave_acesso(novos_dados["nome"])
 
         campos_update = []
         valores = []
