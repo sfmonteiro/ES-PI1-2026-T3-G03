@@ -147,7 +147,7 @@ def listar_eleitores():
         cursor = conexao.cursor()
 
         query = """
-        SELECT nome, titulo_eleitor, cpf, is_mesario
+        SELECT id_eleitor, nome, titulo_eleitor, cpf, is_mesario
         FROM eleitores
         """
 
@@ -155,9 +155,9 @@ def listar_eleitores():
         eleitores = cursor.fetchall()
 
         for eleitor in eleitores:
-            nome, titulo, cpf, is_mesario= eleitor
+            id_eleitor, nome, titulo, cpf, is_mesario= eleitor
             mesario = "SIM" if is_mesario == 1 else "NÃO"
-            print(f"{nome} | Título: {titulo} | CPF: {cpf} | Mesário: {mesario}")
+            print(f"{cor.ciano("[" + str(id_eleitor) + "]")} {nome} | Título: {titulo} | CPF: {cpf} | Mesário: {mesario}")
         return eleitores
 
     except Error as erro:
