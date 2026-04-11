@@ -44,6 +44,69 @@ def conectar():
         msg.alerta(f"Erro ao conectar: {erro}")
         return None
 
+# =====================================================================
+#                          CRUD - CREATE
+# =====================================================================
+
+def cadastrar_eleitor(nome, titulo, cpf, is_mesario, chave_acesso):
+    """
+    Cadastra um eleitor no banco de dados com base nas variáveis inseridas.
+
+    Args:
+        nome (str): Nome completo do eleitor.
+        titulo (int): Título de eleitor.
+        cpf (int): CPF do eleitor.
+        is_mesario (bool): Indica se o eleitor é mesário.
+        chave_acesso (str): Chave de acesso gerada para o eleitor.
+
+    Returns:
+        True: Quando o eleitor é cadastrado com sucesso.
+        False: Quando há CPF ou título já cadastrado, ou quando há erro de conexão com o banco.
+    """
+    conexao = conectar()
+
+    if not conexao:
+        return False
+
+    cursor = None
+
+    try:
+        cursor = conexao.cursor()
+
+        query = """
+        INSERT INTO eleitores
+        (nome, titulo_eleitor, cpf, chave_acesso, is_mesario, status_voto)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        """
+
+        valores = (
+            nome,
+            titulo,
+            cpf,              
+            chave_acesso,     
+            is_mesario,
+            False
+        )
+
+        cursor.execute(query, valores)
+        conexao.commit()
+
+        msg.sucesso("Eleitor cadastrado com sucesso!")
+        return True
+
+    except IntegrityError:
+        msg.erro("CPF ou título de eleitor já cadastrado.")
+        return False
+
+    except Error as erro:
+        msg.erro(f"Erro no banco: {erro}")
+        return False
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao and conexao.is_connected():
+            conexao.close()
 
 # =====================================================================
 #                          CRUD - READ
@@ -130,66 +193,10 @@ def listar_eleitores():
         if conexao and conexao.is_connected():
             conexao.close()
 
-def cadastrar_eleitor(nome, titulo, cpf, is_mesario, chave_acesso):
-    """
-    Cadastra um eleitor no banco de dados com base nas variáveis inseridas.
+# =====================================================================
+#                          CRUD - UPDATE
+# =====================================================================
 
-    Args:
-        nome (str): Nome completo do eleitor.
-        titulo (int): Título de eleitor.
-        cpf (int): CPF do eleitor.
-        is_mesario (bool): Indica se o eleitor é mesário.
-        chave_acesso (str): Chave de acesso gerada para o eleitor.
-
-    Returns:
-        True: Quando o eleitor é cadastrado com sucesso.
-        False: Quando há CPF ou título já cadastrado, ou quando há erro de conexão com o banco.
-    """
-    conexao = conectar()
-
-    if not conexao:
-        return False
-
-    cursor = None
-
-    try:
-        cursor = conexao.cursor()
-
-        query = """
-        INSERT INTO eleitores
-        (nome, titulo_eleitor, cpf, chave_acesso, is_mesario, status_voto)
-        VALUES (%s, %s, %s, %s, %s, %s)
-        """
-
-        valores = (
-            nome,
-            titulo,
-            cpf,              
-            chave_acesso,     
-            is_mesario,
-            False
-        )
-
-        cursor.execute(query, valores)
-        conexao.commit()
-
-        msg.sucesso("Eleitor cadastrado com sucesso!")
-        return True
-
-    except IntegrityError:
-        msg.erro("CPF ou título de eleitor já cadastrado.")
-        return False
-
-    except Error as erro:
-        msg.erro(f"Erro no banco: {erro}")
-        return False
-
-    finally:
-        if cursor:
-            cursor.close()
-        if conexao and conexao.is_connected():
-            conexao.close()
-    
 def editar_eleitor(valor_busca, novos_dados):
     """
     Edita os dados de um eleitor no banco de dados usando CPF ou título de eleitor
@@ -287,6 +294,10 @@ def editar_eleitor(valor_busca, novos_dados):
             cursor.close()
         if conexao and conexao.is_connected():
             conexao.close()
+
+# =====================================================================
+#                          CRUD - DELETE
+# =====================================================================
 
 def remover_eleitor(valor_busca):
     """
