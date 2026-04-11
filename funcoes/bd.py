@@ -8,6 +8,12 @@ from funcoes import msg
 from dotenv import load_dotenv
 import os
 from funcoes import cor
+from funcoes.mod_validacao import validar_titulo
+from funcoes.mod_validacao import validar_cpf
+from funcoes.modulo_criptografia import cifrar
+from funcoes.modulo_criptografia import decifrar
+from funcoes.mod_cacessoprotocolo import gerar_chave_acesso
+from mysql.connector import IntegrityError, Error
 
 load_dotenv()
 
@@ -112,50 +118,78 @@ def cadastrar_eleitor(nome, titulo, cpf, is_mesario, chave_acesso):
 #                          CRUD - READ
 # =====================================================================
 
-def listar_candidatos():
+def cadastrar_eleitor(nome, titulo, cpf, is_mesario):
     """
-    Lista todos os candidatos cadastrados no banco de dados,
-    exibindo número, nome e partido em ordem alfabética.
+    Cadastra um eleitor, garantindo que a chave de acesso seja única no banco.
 
     Args:
-        Nenhum.
+        nome (str): Nome completo do eleitor.
+        titulo (str): Título de eleitor (12 dígitos).
+        cpf (str): CPF do eleitor (11 dígitos).
+        is_mesario (bool): Indica se o eleitor atuará como mesário.
 
     Returns:
-        None
+        bool: True para sucesso, False se houver erro de validação ou duplicidade de documentos.
     """
+    # validação Matemática
+    if not validar_cpf(cpf) or not validar_titulo(titulo):
+        msg.erro("Documentos matematicamente inválidos!")
+        return False
+
     conexao = conectar()
     if not conexao:
-        return
+        return False
+
+    tentando_cadastrar = True
     
-    try:
-        cursor = conexao.cursor()
+    while tentando_cadastrar:
+        # geração de nova chave a cada tentativa, para evitar colisões
+        chave_bruta = gerar_chave_acesso(nome)
 
-        query = """
-        SELECT numero_candidato, nome_candidato, partido_candidato
-        FROM candidatos
-        ORDER BY nome_candidato
-        """
-        cursor.execute(query)
-        candidatos = cursor.fetchall()
+        # criptografia
+        cpf_cifrado = cifrar(cpf) 
+        chave_cifrada = cifrar(chave_bruta)
+        titulo_cifrado = cifrar(titulo)
 
-        if not candidatos:
-            msg.alerta("Nenhum candidato cadastrado.")
-            return
+        try:
+            cursor = conexao.cursor()
+            query = """
+            INSERT INTO eleitores 
+            (nome, titulo_eleitor, cpf, chave_acesso, is_mesario, status_voto) 
+            VALUES (%s, %s, %s, %s, %s, %s)
+            """
+            valores = (nome, titulo_cifrado, cpf_cifrado, chave_cifrada, is_mesario, False)
 
-        print(cor.magenta("\n█▓▒▒░░░    LISTAGEM DE CANDIDATOS    ░░░▒▒▓█\n"))
+            cursor.execute(query, valores)
+            conexao.commit()
 
-        for candidato in candidatos:
-            numero, nome, partido = candidato
-            print(f"[{numero}] {nome} | {partido}")
+            # Se chegou aqui funcionou e a chave é única, então informa o usuário e sai do loop
+            msg.sucesso(f"Eleitor cadastrado! CHAVE DE ACESSO: {chave_bruta}")
+            tentando_cadastrar = False # sai do loop
+            return True
 
-    except Error as erro:
-        msg.alerta(f"Erro ao listar candidatos: {erro}")
+        except IntegrityError as err:
+            # verifica se o erro foi especificamente na chave_acesso (duplicidade)
+            erro_msg = str(err)
+            if "chave_acesso" in erro_msg:
+                # Log interno: avisa que houve colisão de chave e tentará gerar outra
+                print("Aviso: Chave duplicada gerada. Tentando nova combinação...")
+                continue # volta para o início e gera nova chave
+            else:
+                # se o erro for CPF ou Título, para o processo
+                msg.erro("Erro: CPF ou Título já cadastrado no sistema.")
+                tentando_cadastrar = False
+                return False
+        
+        except Error as e:
+            msg.erro(f"Erro inesperado no banco: {e}")
+            return False
+        finally:
+            if 'cursor' in locals():
+                cursor.close()
 
-    finally:
-        if cursor:
-            cursor.close()
-        if conexao and conexao.is_connected():
-            conexao.close()
+    if conexao.is_connected():
+        conexao.close()
         
 def listar_eleitores():
     """
