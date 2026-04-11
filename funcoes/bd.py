@@ -190,6 +190,166 @@ def cadastrar_eleitor(nome, titulo, cpf, is_mesario, chave_acesso):
         if conexao and conexao.is_connected():
             conexao.close()
     
+def editar_eleitor(valor_busca, novos_dados):
+    """
+    Edita os dados de um eleitor no banco de dados usando CPF ou título de eleitor
+    como critério de busca.
+
+    A função identifica o tipo pela quantidade de dígitos informado:
+    11 dígitos para CPF e 12 dígitos para título de eleitor.
+    Se o nome for alterado, gera uma nova chave de acesso.
+
+    Args:
+        valor_busca (str): CPF ou título de eleitor usado para localizar o eleitor.
+        novos_dados (dict): Dicionário com os campos permitidos para atualização.
+        Campos permitidos: nome, chave_acesso, is_mesario.
+
+    Returns:
+        bool: True se a atualização ocorrer com sucesso, False caso contrário.
+    """
+    conexao = conectar()
+
+    if not conexao:
+        return False
+
+    cursor = None
+
+    try:
+        cursor = conexao.cursor()
+
+        # Remove espaços, pontos e traços (verifica apenas dígitos)
+        valor_limpo = "".join(char for char in str(valor_busca) if char.isdigit())
+
+        if len(valor_limpo) == 11:
+            campo_busca = "cpf"
+        elif len(valor_limpo) == 12:
+            campo_busca = "titulo_eleitor"
+        else:
+            msg.erro("CPF ou título de eleitor inválido. Quantidade de dígitos incorreta.")
+            return False
+
+        # Verifica se o eleitor existe
+        query_busca = f"""
+        SELECT nome
+        FROM eleitores
+        WHERE {campo_busca} = %s
+        """
+        cursor.execute(query_busca, (valor_limpo,))
+        eleitor = cursor.fetchone()
+
+        if not eleitor:
+            msg.alerta("Nenhum eleitor encontrado com os dados informados.")
+            return False
+
+        nome_atual = eleitor[0]
+
+        campos_permitidos = ["nome", "chave_acesso", "is_mesario"]
+
+        # Se o nome mudou gera nova chave (AGUARDANDO FUNÇÃO DE GERER CHAVE)
+        # if "nome" in novos_dados and novos_dados["nome"] != nome_atual:
+        #     novos_dados["chave_acesso"] = gerar_chave_acesso(novos_dados["nome"])
+
+        campos_update = []
+        valores = []
+
+        for campo in campos_permitidos:
+            if campo in novos_dados:
+                campos_update.append(f"{campo} = %s")
+                valores.append(novos_dados[campo])
+
+        if not campos_update:
+            msg.alerta("Nenhum campo válido foi informado para atualização.")
+            return False
+
+        query_update = f"""
+        UPDATE eleitores
+        SET {", ".join(campos_update)}
+        WHERE {campo_busca} = %s
+        """
+        valores.append(valor_limpo)
+
+        cursor.execute(query_update, tuple(valores))
+        conexao.commit()
+
+        if cursor.rowcount > 0:
+            msg.sucesso("Eleitor atualizado com sucesso!")
+            return True
+
+        msg.alerta("Nenhuma alteração foi aplicada.")
+        return False
+
+    except Error as erro:
+        msg.erro(f"Erro no banco: {erro}")
+        return False
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao and conexao.is_connected():
+            conexao.close()
+
+def remover_eleitor(valor_busca):
+    """
+    Remove um eleitor do banco de dados usando CPF ou título de eleitor
+    como critério de busca.
+
+    A função identifica o tipo pela quantidade de dígitos informado:
+    11 dígitos para CPF e 12 dígitos para título de eleitor.
+    Se o nome for alterado, gera uma nova chave de acesso.
+
+    Args:
+        valor_busca (str): CPF ou título de eleitor usado para localizar o eleitor.
+
+    Returns:
+        bool: True se a remoção for realizada com sucesso, False caso contrário.
+    """
+    conexao = conectar()
+
+    if not conexao:
+        return False
+
+    cursor = None
+
+    try:
+        cursor = conexao.cursor()
+
+        # Remove qualquer coisa que não seja número
+        valor_limpo = "".join(char for char in str(valor_busca) if char.isdigit())
+
+        # Identifica se é CPF ou título
+        if len(valor_limpo) == 11:
+            campo_busca = "cpf"
+        elif len(valor_limpo) == 12:
+            campo_busca = "titulo_eleitor"
+        else:
+            msg.erro("CPF ou título de eleitor inválido. Quantidade de dígitos incorreta.")
+            return False
+
+        # Executa a remoção
+        query = f"""
+        DELETE FROM eleitores
+        WHERE {campo_busca} = %s
+        """
+
+        cursor.execute(query, (valor_limpo,))
+        conexao.commit()
+
+        if cursor.rowcount > 0:
+            msg.sucesso("Eleitor removido com sucesso!")
+            return True
+
+        msg.alerta("Nenhum eleitor encontrado com os dados informados.")
+        return False
+
+    except Error as erro:
+        msg.erro(f"Erro no banco: {erro}")
+        return False
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao and conexao.is_connected():
+            conexao.close()
 
 # =====================================================================
 #                          EXECUÇÃO
