@@ -7,17 +7,6 @@
 #                                            Módulo Criptografia
 #===================================================================================================================
 def cifrar(texto):
-    """
-    Solicita ao usuário a entrada de uma string alfanumérica.
-
-    A função é responsável por criptografar uma string alfanumérica.
-
-    Args:
-        texto (str): Recebe a string alfanumérica a ser criptografada.
-
-    Returns:
-        textonovo (str): Retorna uma string alfanumérica criptografada.
-    """
     alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     texto = texto.upper()
     textonovo = ""
@@ -45,17 +34,6 @@ def cifrar(texto):
     return textonovo
 
 def decifrar(texto, tamanho_original):
-    """
-    Solicita ao usuário a entrada de uma string alfanumérica.
-
-    A função é responsável por descriptografar uma string alfanumérica.
-
-    Args:
-        texto (str): Recebe a string alfanumérica criptografada.
-
-    Returns:
-        textonovo (str): Retorna uma string alfanumérica descriptografada.
-    """
     alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     texto = texto.upper()
     textonovo = ""
@@ -81,8 +59,6 @@ def decifrar(texto, tamanho_original):
         textonovo += alfabeto[novo2]
     
     return textonovo[:tamanho_original]
-<<<<<<<< HEAD:funcoes/mod_criptografia.py
-========
 
 # while True:
 #     print("\n1 - Cifrar")
@@ -117,4 +93,3 @@ def decifrar(texto, tamanho_original):
 
 #     else:
 #         print("Opção inválida.")
->>>>>>>> origin/base-oficial:funcoes/cripto.py

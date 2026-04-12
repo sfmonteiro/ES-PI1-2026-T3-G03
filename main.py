@@ -46,7 +46,7 @@ while (op_mod != 0):
                     #=================== CADASTRAR ELEITOR ====================
                     case 1: 
                         menu.limpar_terminal()
-                        menu.mostrar_ger_cad_eleitores
+                        menu.mostrar_ger_cad_eleitores()
 
                         dict_cadastro = mod_ger.menu_cad_eleitor()
                         chave_gerada = mod_ger.gerar_chave_acesso(dict_cadastro['nome'])
@@ -78,26 +78,71 @@ while (op_mod != 0):
                                 #=================== MENU BUSCAR ELEITORES POR CPF OU TITULO ====================
                                 case 1:
                                     menu.limpar_terminal()
-                                    msg.alerta("[Digitar CPF ou Título]")
+                                    print(cor.ciano("\n█▓▒▒░░░ BUSCAR ELEITOR ░░░▒▒▓█"))
 
-                                    op_editar_eleitor = -1
+                                    valor_busca = input("Digite CPF ou título do eleitor: ").strip()
 
-                                    while (op_editar_eleitor != 0):
+                                    eleitor = bd.buscar_eleitor(valor_busca)
+
+                                    if not eleitor:
+                                        msg.alerta("Eleitor não encontrado.")
+                                        input()
+                                        continue
+
+                                    id_eleitor, nome, titulo, cpf, is_mesario = eleitor
+                                    mesario = "SIM" if is_mesario else "NÃO"
+
+                                    cpf_decifrado = cripto.decifrar(cpf, 11)
+                                    titulo_decifrado = cripto.decifrar(titulo, 12)
+
+                                    print(f"[{id_eleitor}] {nome} | Título: {titulo_decifrado} | CPF: {cpf_decifrado} | Mesário: {mesario}")
+
+                                    confirmar = input("\nConfirmar operação para este eleitor? (s/n): ")
+
+                                    if confirmar != "s":
+                                        msg.alerta("Operação cancelada.")
+                                        input("\nEnter para voltar...")
+                                        continue
+
+                                    op = -1
+
+                                    while op != 0:
                                         menu.limpar_terminal()
                                         menu.mostrar_ger_eleitores_edit()
-                                        op_editar_eleitor = menu.selecionar_opcao()
+                                        op = menu.selecionar_opcao()
 
-                                        match op_editar_eleitor:
-
+                                        match op:
                                             #=================== MENU EDITAR ELEITOR ====================
                                             case 1:
                                                 menu.limpar_terminal()
-                                                msg.alerta("[Editar campos, talvez mais um while para cada opção]")
+                                                print(cor.ciano("\n█▓▒▒░░░ EDITAR ELEITOR ░░░▒▒▓█"))
+
+                                                novos_dados = {}
+
+                                                novo_nome = input("Novo nome (Enter p/ manter): ").strip()
+                                                if novo_nome:
+                                                    novos_dados["nome"] = novo_nome
+
+                                                novo_mesario = input("Mesário? (s/n/Enter): ").strip().lower()
+                                                if novo_mesario == "s":
+                                                    novos_dados["is_mesario"] = True
+                                                elif novo_mesario == "n":
+                                                    novos_dados["is_mesario"] = False
+
+                                                if novos_dados:
+                                                    bd.editar_eleitor(valor_busca, novos_dados)
+                                                else:
+                                                    msg.alerta("Nada para atualizar.")
+
+                                                input("\nEnter para continuar...")
+                                            #=================== MENU REMOVER ELEITOR ====================
                                             case 2:
-                                                menu.limpar_terminal()
-                                                msg.alerta("[Remover eleitor]")
+                                                bd.remover_eleitor(valor_busca)
+                                                input("\nEnter para continuar...")
+
                                             case 0:
-                                                msg.alerta("Voltando para o menu anterior...")
+                                                msg.alerta("Voltando...")
+
                                             case _:
                                                 msg.erro("Opção inválida.")
                                 
