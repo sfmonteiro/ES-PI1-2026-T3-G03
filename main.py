@@ -62,7 +62,7 @@ while (op_mod != 0):
                             msg.sucesso("Eleitor cadastrado com sucesso!")
                             mod_ger.mostrar_chave_acesso(chave_gerada)
 
-                        input(cor.amarelo(">> Pressione ENTER para continuar...  "))
+                        input(cor.amarelo(">> Pressione ENTER para retornar ao menu anterior...  "))
 
                     #=================== ELEITORES (GERENCIAR) ====================
                     case 2:
