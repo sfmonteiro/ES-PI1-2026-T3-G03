@@ -5,12 +5,31 @@
 from funcoes import msg
 from funcoes import cor
 import os
+import time
 
 #===================================================================================================================
 #                                                FUNÇÕES AUXILIARES
 #===================================================================================================================
+def validar_numero(numero_str):
+    """
+    Valida se a string de entrada é um número inteiro.
 
-def input_validar_num(mensagem):
+    A função remove espaços em branco e verifica se a string contém apenas dígitos.
+    Se for válida, retorna o número inteiro correspondente. Caso contrário, exibe uma mensagem de alerta.
+
+    Args:
+        numero_str (str): A string a ser validada.
+
+    Returns:
+        int: O número inteiro validado ou uma mensagem de erro.
+    """
+    if numero_str.isdigit():
+        return int(numero_str)
+    else:
+        msg.erro("Digite um número válido.")
+        return None
+
+def selecionar_opcao():
     """
     Solicita ao usuário a entrada de um valor numérico inteiro.
 
@@ -24,28 +43,9 @@ def input_validar_num(mensagem):
         int: Valor numérico inteiro validado.
     """
     while True:
-        valor = input(mensagem).strip()
-        if valor.isdigit():
-            return int(valor)
-        msg.alerta("Digite apenas números.")
-
-
-def selecionar_opcao ():
-    """
-    Solicita ao usuário a escolha de uma opção do menu
-
-    A função utiliza input_validar_num para garantir que apenas valores numéricos sejam aceitos.
-
-    Args:
-        None
-
-    Returns:
-        int: Opção escolhida pelo usuário.
-
-    """
-    return input_validar_num("Selecione sua opção:  ")
-
-
+        valor = input("Selecione sua opção:  ").strip()
+        valor_int = validar_numero(valor)
+        return valor_int
 def limpar_terminal():
     """
     Limpa o terminal durante a execução para melhorar a experiência do usuário.
@@ -58,29 +58,24 @@ def limpar_terminal():
     """
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def mostrar_chave_acesso(chave):
-    """
-    Exibe a chave de aceso formada em uma caixa no terminal.
 
-    Args:
-        chave (str): chave a ser exibida.
-
-    Returns:
-        str: a própria chave de acesso.       
-    """
-    print(f"""
-╔════════════════════════════╗
-║          {chave}           ║
-╚════════════════════════════╝
-""")
-    
 
 
 #===================================================================================================================
 #                                        INICIO DO PROGRAMA E MODULO INICIAL
 #===================================================================================================================
 
-banner_inicio = f"""
+def mostrar_inicio ():
+    """
+    Exibe o banner inicial com o nome do sistema, apresentação e direitos autorais.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
+    print(f"""
 {cor.ciano("""
 ██╗      █████╗ ██████╗    ██████╗ ██╗   ██╗
 ██║     ██╔══██╗██╔══██╗   ██╔══██╗╚██╗ ██╔╝
@@ -92,42 +87,128 @@ banner_inicio = f"""
 ╔══════════════════════════════════════════╗
 ║        SISTEMA DE VOTAÇÃO DIGITAL        ║
 ╚══════════════════════════════════════════╝""")}
-"""
+{cor.preto(" © 2026 | Todos os direitos reservados.")}
+""")
 
-modulo = f"""
-{cor.verde("█▓▒▒░░░ MÓDULOS DO SISTEMA ░░░▒▒▓█")}
+def mostrar_modulos():
+    """
+    Exibe o menu principal com as opções de módulos.
 
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
+    print(f"""
+{cor.verde("""
+╔══════════════════════════════════════════╗
+║            MÓDULOS DO SISTEMA            ║
+╚══════════════════════════════════════════╝
+""")}
 [1]  GERENCIAMENTO
 [2]  VOTAÇÃO
 {cor.vermelho("[0]  ENCERRAR SISTEMA LAD.PY")}
-"""
+""")
 
 #===================================================================================================================
 #                                        MENUS DO MODULO DE GERENCIAMENTO
 #===================================================================================================================
 
-ger_menu = f"""
-{cor.verde("""
-█▀▀ █▀▀ █▀█ █▀▀ █▄░█ █▀▀ █ ▄▀█ █▀▄▀█ █▀▀ █▄░█ ▀█▀ █▀█
-█▄█ ██▄ █▀▄ ██▄ █░▀█ █▄▄ █ █▀█ █░▀░█ ██▄ █░▀█ ░█░ █▄█
-""")}
+def mostrar_ger():
+    """
+    Exibe o menu do módulo de gerenciamento com as opções disponíveis.
 
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
+    print(f"""
+{cor.ciano("""
+╔══════════════════════════════════════════╗
+║              GERENCIAMENTO               ║
+╚══════════════════════════════════════════╝
+""")}
 [1]  CADASTRAR NOVO ELEITOR
 [2]  ELEITORES
 {cor.vermelho("[0]  VOLTAR")}
-"""
+""")
 
-ger_menu_eleitores = f"""
+def mostrar_ger_cad_eleitores():
+    """
+    Exibe o título do menu de cadastro de eleitores.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
+    print(f"""
+{cor.ciano("""
+╔══════════════════════════════════════════╗
+║           CADASTRO DO ELEITOR            ║
+╚══════════════════════════════════════════╝
+""")}""")
+
+def mostrar_ger_eleitores():
+    """
+    Exibe o menu de eleitores cadastrados com as opções de buscar ou listar eleitores.
+
+    Args:
+        Nenhum.
+    Returns:
+        None.
+    """
+    print(f"""
+{cor.ciano("""
+╔══════════════════════════════════════════╗
+║                ELEITORES                 ║
+╚══════════════════════════════════════════╝
+""")}
 [1]  BUSCAR ELEITORES POR CPF/TÍTULO
 [2]  LISTAR TODOS OS ELEITORES
 {cor.vermelho("[0]  VOLTAR")}
-"""
+""")
+    
+def mostrar_ger_eleitores_edit():
+    """
+    Exibe o menu para editar ou remover o eleitor encontrado.
 
-ger_menu_eleitores_opcao = f"""
+    Args:
+        Nenhum.
+    Returns:
+        None.
+    """
+    print(f"""
+{cor.ciano("""
+╔══════════════════════════════════════════╗
+║                ELEITORES                 ║
+╚══════════════════════════════════════════╝
+""")}
 [1]  EDITAR ELEITOR
 [2]  REMOVER ELEITOR
 {cor.vermelho("[0]  VOLTAR")}
-"""
+""")
+
+def mostrar_ger_list_eleitores():
+    """
+    Exibe o título do menu de eleitores cadastrados para listagem.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
+    print(f"""
+{cor.ciano("""
+╔══════════════════════════════════════════╗
+║           ELEITORES CADASTRADOS          ║
+╚══════════════════════════════════════════╝
+""")}""")
 
 
 #===================================================================================================================
@@ -136,35 +217,43 @@ ger_menu_eleitores_opcao = f"""
 
 vot_menu = f"""
 {cor.verde("""
-█░█ █▀█ ▀█▀ ▄▀█ █▀▀ ▄▀█ █▀█
-▀▄▀ █▄█ ░█░ █▀█ █▄▄ █▀█ █▄█
+╔══════════════════════════════════════════╗
+║                 VOTAÇÃO                  ║
+╚══════════════════════════════════════════╝
 """)}
-
 [1]  ABRIR SISTEMA DE VOTAÇÃO
 [2]  AUDITORIA DO SISTEMA DE VOTAÇÃO
 [3]  RESULTADO DA VOTAÇÃO
 {cor.vermelho("[0]  VOLTAR")}
 """
 vot_menu_votacao = f"""
+╔══════════════════════════════════════════╗
+║            SISTEMA DE VOTAÇÃO            ║
+╚══════════════════════════════════════════╝
 [1]  VOTAR
 [2]  ENCERRAR SISTEMA DE VOTAÇÃO
 """
 
 vot_menu_auditoria = f"""
+{cor.ciano("""
+╔══════════════════════════════════════════╗
+║                AUDITORIA                 ║
+╚══════════════════════════════════════════╝
+""")}
 [1]  EXIBIR LOGS DE OCORRÊNCIAS
 [2]  EXIBIR PROTOCOLOS DA VOTAÇÃO
 {cor.vermelho("[0]  VOLTAR")}
 """
 
 vot_menu_resultado = f"""
+{cor.ciano("""
+╔══════════════════════════════════════════╗
+║           RESULTADO DA VOTAÇÃO           ║
+╚══════════════════════════════════════════╝
+""")}
 [1]  BOLETIM DE URNA
 [2]  ESTATÍSTICA DE COMPARECIMENTO
 [3]  VOTOS POR PARTIDO
 [4]  VALIDAÇÃO DA INTEGRIDADE DOS VOTOS
 {cor.vermelho("[0]  VOLTAR")}
 """
-
-
-
-
-

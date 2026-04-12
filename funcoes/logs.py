@@ -3,7 +3,8 @@
 #===================================================================================================================
 
 from funcoes import msg
-import datetime                                         
+import datetime      
+import os                                   
 
 def agora():
     """
@@ -17,110 +18,135 @@ def agora():
     """
     return datetime.datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")    
 
-def inicializar_logs():
+# def inicializar_logs():
+#     """
+#     Cria um novo arquivo de log com nome disponível (logs{i}.txt),
+#     evitando sobrescrever arquivos existentes.
+
+#     Args:
+#         Nenhum.
+
+#     Returns:
+#         str: Nome do arquivo criado.
+#     """
+
+#     contador = 1
+#     nome_arquivo = f"logs{contador}.txt"
+
+#     while os.path.exists(nome_arquivo):
+#         contador += 1
+
+#     nome_arquivo = f"logs{contador}.txt"
+
+#     with open(nome_arquivo, "w", encoding="utf-8") as arq:
+#         arq.write("""╔════════════════════════════════════════════════════╗
+# ║        LAD.PY | LOG DE OCORRÊNCIAS CRÍTICAS        ║
+# ╚════════════════════════════════════════════════════╝
+# """)
+
+#     msg.sucesso(f"\nArquivo {nome_arquivo} criado com sucesso!")
+
+#     return nome_arquivo
+
+def zerezima():
     """
-    Verifica se o arquivo de logs 'ocorrencias.txt' existe.
-
-    Caso não exista, cria o arquivo com o cabeçalho padrão do sistema e exibe uma mensagem de sucesso ao usuário.
-
-    Args:
-        Nenhum.
-
-    Returns:
-        None.
-    """
-    try:
-        with open("ocorrencias.txt", "r", encoding="utf-8") as arq:
-            pass
-
-    except FileNotFoundError:
-        with open("ocorrencias.txt", "w", encoding="utf-8") as arq:
-            arq.write("\n=====================================================================================")
-            arq.write(f"\n                      LAD.PY | LOG DE OCORRÊNCIAS CRÍTICAS")
-            arq.write("\n=====================================================================================\nl")
-
-        msg.sucesso("\nArquivo 'ocorrências.txt' criado com sucesso!")
-
-def log_zerezima():
-    """
+    Cria um novo arquivo de log com nome disponível (logs{i}.txt), evitando sobrescrever arquivos existentes.
+    
     Registra no arquivo de log o evento de abertura de votação após a zerézima.
 
     Args:
         Nenhum.
 
     Returns:
-        None.
+        str: Nome do arquivo criado.
     """
-    with open("ocorrencias.txt", "a", encoding="utf-8") as arq:
+
+    contador = 1
+    nome_arquivo = f"logs{contador}.txt"
+
+    while os.path.exists(nome_arquivo):
+        contador += 1
+        nome_arquivo = f"logs{contador}.txt"
+
+    with open(nome_arquivo, "w", encoding="utf-8") as arq:
+        arq.write("""
+╔════════════════════════════════════════════════════╗
+║        LAD.PY | LOG DE OCORRÊNCIAS CRÍTICAS        ║
+╚════════════════════════════════════════════════════╝
+""")
         arq.write("\n------------------------------------------------------------------------------------------")
         arq.write(f"\n{agora()}\nABERTURA: Votação iniciada com sucesso. Total de votos zerado.")
 
-def log_acesso_negado():
+    return nome_arquivo
+
+def acesso_negado(nome_arquivo):
     """
     Registra no arquivo de log o evento de tentativa de acesso negado quando as credenciais estão incorretas.
 
     Args:
-        Nenhum.
+        nome_arquivo (str): Caminho do arquivo de log.
 
     Returns:
         None.
     """
-    with open("ocorrencias.txt", "a", encoding="utf-8") as arq:
+    with open(nome_arquivo, "a", encoding="utf-8") as arq:
         arq.write("\n------------------------------------------------------------------------------------------")
         arq.write(f"\n{agora()}\nALERTA: Tentativa de acesso negado.")
 
-def log_voto_duplo():
+def voto_duplo(nome_arquivo):
     """
     Registra no arquivo de log o evento de tentativa de voto duplo, quando o eleitor já realizou um voto antes.
 
     Args:
-        Nenhum.
+        nome_arquivo (str): Caminho do arquivo de log.
 
     Returns:
         None.
     """
-    with open("ocorrencias.txt", "a", encoding="utf-8") as arq:
+    with open(nome_arquivo, "a", encoding="utf-8") as arq:
         arq.write("\n------------------------------------------------------------------------------------------")
         arq.write(f"\n{agora()}\nALERTA: Tentativa de voto duplo.")
 
-def log_voto_sucesso():
+def log_voto_sucesso(nome_arquivo):
     """
     Registra no arquivo de log o evento de voto realizado com sucesso.
 
     Args:
-        Nenhum.
+        nome_arquivo (str): Caminho do arquivo de log.
 
     Returns:
         None.
     """
-    with open("ocorrencias.txt", "a", encoding="utf-8") as arq:
+    with open(nome_arquivo, "a", encoding="utf-8") as arq:
         arq.write("\n------------------------------------------------------------------------------------------")
         arq.write(f"\n{agora()}\nSUCESSO: Voto realizado com sucesso.") 
 
-def log_encerramento():
+def encerramento(nome_arquivo):
     """
     Registra no arquivo de log o evento de encerramento do sistema de votação.
 
     Args:
-        Nenhum.
+        nome_arquivo (str): Caminho do arquivo de log.
 
     Returns:
         None.
     """
-    with open("ocorrencias.txt", "a", encoding="utf-8") as arq:
+    with open(nome_arquivo, "a", encoding="utf-8") as arq:
         arq.write("\n------------------------------------------------------------------------------------------")
         arq.write(f"\n{agora()}\nENCERRAMENTO: Votação finalizada com sucesso.")
 
-def exibir_logs():
+def exibir_logs(nome_arquivo):
     """
-    Exibe no terminal o conteúdo completo do arquivo 'ocorrencias.txt'.
+    Exibe no terminal o conteúdo completo do arquivo de log.
 
     Args:
-        Nenhum.
+        nome_arquivo (str): Caminho do arquivo de log.
 
     Returns:
         None.
     """
-    with open("ocorrencias.txt", "r", encoding="utf-8") as arq:
+    with open(nome_arquivo, "r", encoding="utf-8") as arq:
         logs = arq.read()
         print(logs)
+
+
