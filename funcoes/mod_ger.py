@@ -2,7 +2,7 @@
 #                                                 BIBLIOTECAS
 #===================================================================================================================
 
-from funcoes import bd
+from funcoes import bd, mod_validacao
 from funcoes import menu
 from funcoes import cor
 from funcoes import msg
@@ -49,16 +49,39 @@ def menu_cad_eleitor ():
         print(cor.ciano(f"Passo {i+1} de 5..."))
         if i == 0:
             dict_cadastro["nome"] = input_validar_nome_completo()
+
         elif i == 1:
-            dict_cadastro["titulo_eleitor"] = input("Digite seu título de eleitor (apenas números):  ").strip()
+            titulo_errado = True
+            while titulo_errado:
+                titulo = input("Digite seu título de eleitor (apenas números):  ").strip()
+                if mod_validacao.validar_titulo(titulo):
+                    dict_cadastro["titulo_eleitor"] = titulo
+                    titulo_errado = False
+                else:
+                    menu.limpar_terminal()
+                    msg.erro("Título de eleitor inválido. Digite um número válido.")
+                    input(cor.amarelo(">> Pressione ENTER para tentar novamente...  "))
+                    menu.limpar_terminal()
+
         elif i == 2:
-            dict_cadastro["cpf"] = input("Digite seu CPF (apenas números):  ").strip()
+            cpf_errado = True
+            while cpf_errado:
+                cpf = input("Digite seu CPF (apenas números):  ").strip()
+                if mod_validacao.validar_cpf(cpf):
+                    dict_cadastro["cpf"] = cpf
+                    cpf_errado = False
+                else:
+                    menu.limpar_terminal()
+                    msg.erro("CPF inválido. Digite um número válido.")
+                    input(cor.amarelo(">> Pressione ENTER para tentar novamente...  "))
+                    menu.limpar_terminal()
+
         elif i == 3:
-            opcaoErrada = True
-            while opcaoErrada:
+            opcao_errada = True
+            while opcao_errada:
                 opcao = input(f"É mesário? {cor.verde("[1] SIM")} {cor.vermelho("[0] NÃO")} : ").strip()
                 if opcao in ["0", "1"]:
-                    opcaoErrada = False
+                    opcao_errada = False
                 # elif opcao not in ["0", "1"] or opcao == "": 
                 else:
                     menu.limpar_terminal()

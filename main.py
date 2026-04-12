@@ -3,12 +3,12 @@
 #===================================================================================================================
 
 from funcoes import menu
-from funcoes import ger
+from funcoes import mod_ger
 from funcoes import msg
 from funcoes import cor
 from funcoes import logs
 from funcoes import bd
-from funcoes import ger
+from funcoes import mod_ger
 from funcoes import cripto
 
 #===================================================================================================================
@@ -17,7 +17,7 @@ from funcoes import cripto
 
 #=================== INICIO DO SISTEMA ====================
 menu.limpar_terminal()
-print(menu.banner_inicio)
+menu.mostrar_inicio()
 input(cor.amarelo(">> Pressione ENTER para iniciar o programa LAD.PY...  "))
 
 #=================== MENU MODULO INICIAL ====================
@@ -38,7 +38,7 @@ while (op_mod != 0):
 
             while (op_ger != 0):
                 menu.limpar_terminal()
-                print(menu.ger_menu)
+                menu.mostrar_ger()
                 op_ger = menu.selecionar_opcao()
 
                 match op_ger:
@@ -46,10 +46,10 @@ while (op_mod != 0):
                     #=================== CADASTRAR ELEITOR ====================
                     case 1: 
                         menu.limpar_terminal()
-                        print(menu.ger_menu_cad_eleitores)
+                        menu.mostrar_ger_cad_eleitores
 
-                        dict_cadastro = ger.menu_cad_eleitor()
-                        chave_gerada = ger.gerar_chave_acesso(dict_cadastro['nome'])
+                        dict_cadastro = mod_ger.menu_cad_eleitor()
+                        chave_gerada = mod_ger.gerar_chave_acesso(dict_cadastro['nome'])
 
                         eleitor = bd.cadastrar_eleitor(
                             dict_cadastro['nome'],
@@ -60,7 +60,7 @@ while (op_mod != 0):
                             )
                         if eleitor:
                             msg.sucesso("Eleitor cadastrado com sucesso!")
-                            ger.mostrar_chave_acesso(chave_gerada)
+                            mod_ger.mostrar_chave_acesso(chave_gerada)
 
                         input(cor.amarelo(">> Pressione ENTER para continuar...  "))
 
@@ -70,7 +70,7 @@ while (op_mod != 0):
 
                         while (op_ger_eleitores != 0):
                             menu.limpar_terminal()
-                            print(menu.ger_menu_eleitores)
+                            menu.mostrar_ger_eleitores()
                             op_ger_eleitores = menu.selecionar_opcao()
 
                             match op_ger_eleitores:
@@ -84,7 +84,7 @@ while (op_mod != 0):
 
                                     while (op_editar_eleitor != 0):
                                         menu.limpar_terminal()
-                                        print(menu.ger_menu_eleitores_opcao)
+                                        menu.mostrar_ger_eleitores_edit()
                                         op_editar_eleitor = menu.selecionar_opcao()
 
                                         match op_editar_eleitor:
@@ -104,7 +104,7 @@ while (op_mod != 0):
                                 #=================== MENU LISTAR TODOS OS ELEITORES ====================
                                 case 2:
                                     menu.limpar_terminal()
-                                    print(menu.ger_menu_list_eleitores)
+                                    menu.mostrar_ger_list_eleitores()
                                     bd.listar_eleitores()
                                     input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
 

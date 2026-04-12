@@ -65,7 +65,17 @@ def limpar_terminal():
 #                                        INICIO DO PROGRAMA E MODULO INICIAL
 #===================================================================================================================
 
-banner_inicio = f"""
+def mostrar_inicio ():
+    """
+    Exibe o banner inicial com o nome do sistema, apresentação e direitos autorais.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
+    print(f"""
 {cor.ciano("""
 ██╗      █████╗ ██████╗    ██████╗ ██╗   ██╗
 ██║     ██╔══██╗██╔══██╗   ██╔══██╗╚██╗ ██╔╝
@@ -78,7 +88,7 @@ banner_inicio = f"""
 ║        SISTEMA DE VOTAÇÃO DIGITAL        ║
 ╚══════════════════════════════════════════╝""")}
 {cor.preto(" © 2026 | Todos os direitos reservados.")}
-"""
+""")
 
 def mostrar_modulos():
     """
@@ -88,7 +98,7 @@ def mostrar_modulos():
         Nenhum.
 
     Returns:
-        str: O menu principal com as opções de módulos.
+        None.
     """
     print(f"""
 {cor.verde("""
@@ -105,7 +115,17 @@ def mostrar_modulos():
 #                                        MENUS DO MODULO DE GERENCIAMENTO
 #===================================================================================================================
 
-ger_menu = f"""
+def mostrar_ger():
+    """
+    Exibe o menu do módulo de gerenciamento com as opções disponíveis.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
+    print(f"""
 {cor.ciano("""
 ╔══════════════════════════════════════════╗
 ║              GERENCIAMENTO               ║
@@ -114,16 +134,35 @@ ger_menu = f"""
 [1]  CADASTRAR NOVO ELEITOR
 [2]  ELEITORES
 {cor.vermelho("[0]  VOLTAR")}
-"""
+""")
 
-ger_menu_cad_eleitores = f"""
+def mostrar_ger_cad_eleitores():
+    """
+    Exibe o título do menu de cadastro de eleitores.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
+    print(f"""
 {cor.ciano("""
 ╔══════════════════════════════════════════╗
 ║           CADASTRO DO ELEITOR            ║
 ╚══════════════════════════════════════════╝
-""")}"""
+""")}""")
 
-ger_menu_eleitores = f"""
+def mostrar_ger_eleitores():
+    """
+    Exibe o menu de eleitores cadastrados com as opções de buscar ou listar eleitores.
+
+    Args:
+        Nenhum.
+    Returns:
+        None.
+    """
+    print(f"""
 {cor.ciano("""
 ╔══════════════════════════════════════════╗
 ║                ELEITORES                 ║
@@ -132,13 +171,44 @@ ger_menu_eleitores = f"""
 [1]  BUSCAR ELEITORES POR CPF/TÍTULO
 [2]  LISTAR TODOS OS ELEITORES
 {cor.vermelho("[0]  VOLTAR")}
-"""
-ger_menu_list_eleitores = f"""
+""")
+    
+def mostrar_ger_eleitores_edit():
+    """
+    Exibe o menu para editar ou remover o eleitor encontrado.
+
+    Args:
+        Nenhum.
+    Returns:
+        None.
+    """
+    print(f"""
+{cor.ciano("""
+╔══════════════════════════════════════════╗
+║                ELEITORES                 ║
+╚══════════════════════════════════════════╝
+""")}
+[1]  EDITAR ELEITOR
+[2]  REMOVER ELEITOR
+{cor.vermelho("[0]  VOLTAR")}
+""")
+
+def mostrar_ger_list_eleitores():
+    """
+    Exibe o título do menu de eleitores cadastrados para listagem.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
+    print(f"""
 {cor.ciano("""
 ╔══════════════════════════════════════════╗
 ║           ELEITORES CADASTRADOS          ║
 ╚══════════════════════════════════════════╝
-""")}"""
+""")}""")
 
 
 #===================================================================================================================
