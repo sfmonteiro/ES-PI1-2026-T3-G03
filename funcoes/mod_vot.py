@@ -33,3 +33,56 @@ def gerar_protocolo(numero_candidato):
     # montar o protocolo final
     protocolo = prefixo + letras_aleatorias + ano + cand_formatado + final_aleatorio
     return protocolo
+
+
+def encerrar_votacao(titulo, primeiros_cpf, chave):
+    """
+    Encerra a votação com autenticação de um mesário
+    e dupla confirmação da chave de acesso.
+
+    Args:
+        titulo (str): Título de eleitor do mesário.
+        primeiros_cpf (str): Primeiros dígitos do CPF.
+        chave (str): Chave de acesso do mesário.
+
+    Returns:
+        bool: True se a votação for encerrada com sucesso, False caso contrário.
+    """
+
+    print("\nAutenticação do mesário")
+
+    # ==========================
+    # AUTENTICAÇÃO (STUB)
+    # ==========================
+    # Ainda não existe autenticar_eleitor(),
+    # Simula que teve autenticação:
+
+    autenticado = True
+    # qndo autenticar_eleitor() pronto:
+    # trocar autenticado = True p/ autenticado = autenticar_eleitor(titulo, primeiros_cpf, chave)
+
+    if not autenticado:
+        print("Falha na autenticação.")
+        return False
+
+    print("Mesário autenticado.")
+
+    # ==========================
+    # DUPLA CONFIRMAÇÃO DA CHAVE
+    # ==========================
+    print("\nConfirmação de segurança")
+
+    chave_conf_1 = input("Digite a chave: ").strip()
+    chave_conf_2 = input("Confirme a chave: ").strip()
+
+    if chave_conf_1 != chave or chave_conf_2 != chave:
+        print("Chaves não conferem.")
+        return False
+
+    print("Chave confirmada com sucesso.")
+
+    # ==========================
+    # ENCERRAMENTO
+    # ==========================
+    print("\nVotação encerrada com sucesso.")
+    return True

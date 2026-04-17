@@ -81,8 +81,6 @@ def decifrar(texto, tamanho_original):
         textonovo += alfabeto[novo2]
     
     return textonovo[:tamanho_original]
-<<<<<<<< HEAD:funcoes/mod_criptografia.py
-========
 
 # while True:
 #     print("\n1 - Cifrar")
@@ -117,4 +115,3 @@ def decifrar(texto, tamanho_original):
 
 #     else:
 #         print("Opção inválida.")
->>>>>>>> origin/base-oficial:funcoes/cripto.py

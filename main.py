@@ -10,6 +10,7 @@ from funcoes import logs
 from funcoes import bd
 from funcoes import mod_ger
 from funcoes import cripto
+from funcoes import mod_vot
 
 #===================================================================================================================
 #                                                     MAIN
@@ -191,7 +192,22 @@ while (op_mod != 0):
                                     msg.alerta("[Votar]")
 
                                 case 2:
-                                    msg.alerta("[Encerrar votação]")
+                                    menu.limpar_terminal()
+                                    print(cor.azul("\n█▓▒▒░░░ ENCERRAR VOTAÇÃO ░░░▒▒▓█"))
+
+                                    titulo = input("Título do mesário: ").strip()
+                                    primeiros_cpf = input("4 primeiros dígitos do CPF: ").strip()
+                                    chave = input("Chave de acesso: ").strip() #usar getpass ??
+
+                                    resultado = mod_vot.encerrar_votacao(titulo, primeiros_cpf, chave)
+
+                                    if resultado:
+                                        msg.sucesso("Sistema de votação encerrado.")
+                                    else:
+                                        msg.erro("Falha ao encerrar votação.")
+
+                                    input("\nPressione ENTER para continuar...")
+
                                 case _:
                                     msg.erro("Opção inválida.")
 
