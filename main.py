@@ -93,14 +93,18 @@ while (op_mod != 0):
                                     id_eleitor, nome, titulo, cpf, is_mesario = eleitor
                                     mesario = "SIM" if is_mesario else "NÃO"
 
-                                    cpf_decifrado = cripto.decifrar(cpf, 11)
-                                    titulo_decifrado = cripto.decifrar(titulo, 12)
+                                    cpf_decifrado = cripto.decifrar(cpf, "cpf")
+                                    titulo_decifrado = titulo
 
                                     print(f"[{id_eleitor}] {nome} | Título: {titulo_decifrado} | CPF: {cpf_decifrado} | Mesário: {mesario}")
 
-                                    confirmar = input("\nConfirmar operação para este eleitor? (s/n): ")
+                                    print("\nConfirmar operação para este eleitor:")
+                                    print("[1] SIM")
+                                    print("[2] NÃO")
 
-                                    if confirmar != "s":
+                                    confirmar = menu.selecionar_opcao()
+
+                                    if confirmar != 1:
                                         msg.alerta("Operação cancelada.")
                                         input("\nEnter para voltar...")
                                         continue
@@ -124,10 +128,17 @@ while (op_mod != 0):
                                                 if novo_nome:
                                                     novos_dados["nome"] = novo_nome
 
-                                                novo_mesario = input("Mesário? (s/n/Enter): ").strip().lower()
-                                                if novo_mesario == "s":
+                                                print("\nAlterar status de mesário?")
+                                                print("\nStatus de mesário:")
+                                                print("[1] É MESÁRIO")
+                                                print("[2] NÃO É MESÁRIO")
+                                                print("[0] MANTER STATUS ATUAL")
+
+                                                op_mesario = menu.selecionar_opcao()
+
+                                                if op_mesario == 1:
                                                     novos_dados["is_mesario"] = True
-                                                elif novo_mesario == "n":
+                                                elif op_mesario == 2:
                                                     novos_dados["is_mesario"] = False
 
                                                 if novos_dados:
