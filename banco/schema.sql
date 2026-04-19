@@ -1,4 +1,6 @@
 USE LAD_Py;
+
+-- Tabelas "eleitores" (Gabrielle):
 CREATE TABLE IF NOT EXISTS eleitores (
     id_eleitor INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,

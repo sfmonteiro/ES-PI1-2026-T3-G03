@@ -97,6 +97,56 @@ def cadastrar_eleitor(nome, titulo, cpf, chave_acesso, is_mesario):
             cursor.close()
         if conexao and conexao.is_connected():
             conexao.close()
+            
+def insert_voto(id_candidato, protocolo):
+    """
+    Inserir informações de voto no banco de dados com base nas variáveis inseridas.
+
+    Args:
+        id_candidato (int)
+        protocolo (str): gerado na função gerar_protocolo, ja cifrado
+
+    Returns:
+        True: Quando as informações de voto são cadastradas com sucesso.
+        False: Quando há erro de conexão com o banco.
+    """
+    conexao = conectar()
+    if not conexao:
+        return False
+
+    cursor = None
+    try:
+        cursor = conexao.cursor()
+
+        query = """
+        INSERT INTO votos
+        (id_candidato, protocolo)
+        VALUES (%s, %s)
+        """
+
+        valores = (id_candidato, protocolo)
+
+        cursor.execute(query, valores)
+        conexao.commit()
+
+        if cursor.rowcount > 0:
+            return True
+        else:
+            return False
+
+    except IntegrityError:
+        msg.erro("Protocolo ja existe.")
+        return False
+
+    except Error as erro:
+        msg.erro(f"Erro no banco: {erro}")
+        return False
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao and conexao.is_connected():
+            conexao.close()
 
 
 # =====================================================================
@@ -156,10 +206,10 @@ def listar_candidatos():
         return False
     
     try:
-        cursor = conexao.cursor()
+        cursor = conexao.cursor(dictionary=True)
 
         query = """
-        SELECT numero_candidato, nome_candidato, partido_candidato
+        SELECT numero_candidato, nome_candidato, partido_candidato, id_candidato
         FROM candidatos
         ORDER BY nome_candidato
         """
@@ -173,8 +223,8 @@ def listar_candidatos():
         print(cor.magenta("\n█▓▒▒░░░    LISTAGEM DE CANDIDATOS    ░░░▒▒▓█\n"))
 
         for candidato in candidatos:
-            numero, nome, partido = candidato
-            print(f"[{numero}] {nome} | {partido}")
+            print(f"[{candidato['numero_candidato']}] {candidato['nome_candidato']} | {candidato['partido_candidato']}")
+        return candidatos
 
     except Error as erro:
         msg.alerta(f"Erro ao listar candidatos: {erro}")
@@ -184,6 +234,23 @@ def listar_candidatos():
             cursor.close()
         if conexao and conexao.is_connected():
             conexao.close()
+            
+def listar_candidatos_numero(numero_candidato):
+    """
+    Lista todos os candidatos cadastrados no banco de dados,
+    e compara o número indicado no parâmetro.
+
+    Args:
+        numero_candidato.
+
+    Returns:
+        Candidato referente ao número indicado ou None se não encontrar
+    """
+    candidatos = listar_candidatos()
+    for candidato in candidatos:
+        if candidato['numero_candidato'] == numero_candidato:
+            return candidato
+    return None
         
 def listar_eleitores():
     """
@@ -376,6 +443,48 @@ def editar_eleitor(valor_busca, novos_dados):
             cursor.close()
         if conexao and conexao.is_connected():
             conexao.close()
+            
+def editar_status_voto(id_eleitor):
+    """
+    Edita o atributo bool status_voto no bd.
+
+    A função identifica o eleitor de acordo com o id e altera o argumento para TRUE.
+
+    Args:
+        id_eleitor (int): ID criado automaticamente.
+
+    Returns:
+        bool: True se a atualização ocorrer com sucesso, False caso contrário.
+    """
+    conexao = conectar()
+    if not conexao:
+        return False
+
+    cursor = None
+
+    try:
+        cursor = conexao.cursor()
+        cursor.execute(
+            f"UPDATE eleitores SET status_voto = TRUE WHERE id_eleitor = %s", (id_eleitor,)
+        )
+        conexao.commit()
+        if cursor.rowcount > 0:
+            msg.sucesso("Eleitor atualizado com sucesso!")
+            return True
+
+        msg.alerta("Nenhuma alteração realizada.")
+        return False
+
+    except Error as erro:
+        msg.erro(f"Erro no banco: {erro}")
+        return False
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao and conexao.is_connected():
+            conexao.close()
+    
 
 # =====================================================================
 #                            4. DELETE

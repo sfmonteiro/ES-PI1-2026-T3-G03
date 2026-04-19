@@ -197,10 +197,13 @@ while (op_mod != 0):
                             op_votacao = menu.selecionar_opcao()
 
                             match op_votacao:
-                                case 1:
+                                case 1:                                    
                                     msg.sucesso("[Zerézima] realizada!")
                                     bd.listar_candidatos()
                                     msg.alerta("[Votar]")
+                                    # protocolo = mod_vot.registrar_voto(id_eleitor, numero_candidato)
+                                    # if protocolo is not None:
+                                    #     msg.sucesso(f"Votação finalizada protocolo: {protocolo}")
 
                                 case 2:
                                     menu.limpar_terminal()

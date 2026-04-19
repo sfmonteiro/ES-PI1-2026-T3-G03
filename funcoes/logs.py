@@ -106,6 +106,20 @@ def voto_duplo(nome_arquivo):
     with open(nome_arquivo, "a", encoding="utf-8") as arq:
         arq.write("\n------------------------------------------------------------------------------------------")
         arq.write(f"\n{agora()}\nALERTA: Tentativa de voto duplo.")
+        
+def log_protocolos(protocolo):
+    """
+    Registra no arquivo de log protocolos o protocolo gerado na votação sem cifra.
+
+    Args:
+        protocolo (str): protocolo gerado na função.
+
+    Returns:
+        None.
+    """
+    with open("protocolos.txt", "a", encoding="utf-8") as arq:
+        arq.write("\n------------------------------------------------------------------------------------------")
+        arq.write(f"\n{agora()}\nProtocolo: {protocolo}")
 
 def log_voto_sucesso(nome_arquivo):
     """

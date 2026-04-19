@@ -1,5 +1,9 @@
 import random
 import string
+from funcoes import bd
+from funcoes import cripto
+from funcoes import logs
+from funcoes import msg
 
 
 def gerar_protocolo(numero_candidato):
@@ -32,6 +36,32 @@ def gerar_protocolo(numero_candidato):
     
     # montar o protocolo final
     protocolo = prefixo + letras_aleatorias + ano + cand_formatado + final_aleatorio
+    return protocolo
+
+def registrar_voto(id_eleitor, numero_candidato):
+    """
+    Chama a função de gerar_protocolo e adiciona a cifra no protocolo gerado.
+    Chama a função listar_candidatos pelo número para encontrar o candidato que o eleitor escolheu.
+    Chama a função insert_voto para salvar no banco de dados as informações.
+    Chama a função editar_status_voto para atualizar o atributo status_voto no bd.
+    Chama a função log_protocolos para gerar o arquivo txt e registrar os protocolos.
+
+    Args:
+        id_eleitor (int): id do eleitor identificado no login
+        numero_candidato (int): O número do candidato escolhido pelo eleitor.
+
+    Returns:
+        Número de protocolo.
+    """
+    protocolo = gerar_protocolo(numero_candidato)
+    protocolo_cifra = cripto.cifrar(protocolo)
+    candidato = bd.listar_candidatos_numero(numero_candidato)
+    if candidato == None:
+        msg.erro("Esse candidato não existe.")
+        return None
+    bd.insert_voto(candidato['id_candidato'], protocolo_cifra)
+    bd.editar_status_voto(id_eleitor)
+    logs.log_protocolos(protocolo)
     return protocolo
 
 
