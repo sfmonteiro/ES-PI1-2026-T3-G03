@@ -28,11 +28,11 @@ def conectar():
     """
     try:
         conexao = mysql.connector.connect(
-            host="127.0.0.1",
-            port=3306,
-            user="root",
-            password="puc123",
-            database="LAD_Py"
+            host=os.getenv("DB_HOST"),
+            port=int(os.getenv("DB_PORT")),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            database=os.getenv("DB_NAME")
         )
 
         return conexao
