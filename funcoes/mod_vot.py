@@ -1,6 +1,5 @@
 import random
 import string
-from funcoes.mod_autenteleitor import autenticar_eleitor
 from cripto import decifrar 
 
 def gerar_protocolo(numero_candidato):
