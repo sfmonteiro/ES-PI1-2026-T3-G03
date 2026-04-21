@@ -1,6 +1,8 @@
 import random
 import string
 
+from funcoes.mod_autenteleitor import autenticar_eleitor
+
 
 def gerar_protocolo(numero_candidato):
     """
@@ -35,7 +37,7 @@ def gerar_protocolo(numero_candidato):
     return protocolo
 
 
-def encerrar_votacao(titulo, primeiros_cpf, chave):
+def encerrar_votacao(titulo, primeiros_cpf, chave, conexao):
     """
     Encerra a votação com autenticação de um mesário
     e dupla confirmação da chave de acesso.
@@ -52,37 +54,26 @@ def encerrar_votacao(titulo, primeiros_cpf, chave):
     print("\nAutenticação do mesário")
 
     # ==========================
-    # AUTENTICAÇÃO (STUB)
+    # AUTENTICAÇÃO
     # ==========================
-    # Ainda não existe autenticar_eleitor(),
-    # Simula que teve autenticação:
-
-    autenticado = True
-    # qndo autenticar_eleitor() pronto:
-    # trocar autenticado = True p/ autenticado = autenticar_eleitor(titulo, primeiros_cpf, chave)
-
-    if not autenticado:
-        print("Falha na autenticação.")
+    
+    resultado = autenticar_eleitor(titulo, primeiros_cpf, chave, conexao)
+    
+    if not resultado["sucesso"] or not resultado.get("is_mesario"):
+        print("Falha na autenticação ou usuário não é mesário.")
         return False
-
+    
     print("Mesário autenticado.")
 
-    # ==========================
-    # DUPLA CONFIRMAÇÃO DA CHAVE
-    # ==========================
-    print("\nConfirmação de segurança")
-
-    chave_conf_1 = input("Digite a chave: ").strip()
-    chave_conf_2 = input("Confirme a chave: ").strip()
-
-    if chave_conf_1 != chave or chave_conf_2 != chave:
-        print("Chaves não conferem.")
+    confirma = input("Deseja realmente encerrar a votação? (Sim/Não): ").strip().lower()
+    if confirma != "sim":
         return False
 
-    print("Chave confirmada com sucesso.")
+    # Dupla confirmação da chave 
+    chave_conf = input("Confirme sua chave para fechar a urna: ").strip()
+    if chave_conf != chave:
+        print("Chave incorreta para encerramento.")
+        return False
 
-    # ==========================
-    # ENCERRAMENTO
-    # ==========================
-    print("\nVotação encerrada com sucesso.")
+    print("\nVotação encerrada com sucesso.") 
     return True
