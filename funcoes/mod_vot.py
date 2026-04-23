@@ -3,7 +3,8 @@ import string
 from . import bd
 from . import cripto
 from . import logs
-from . import msg from cripto import decifrar 
+from . import msg 
+from .cripto import decifrar 
 
 def gerar_protocolo(numero_candidato):
     """
@@ -93,7 +94,6 @@ def autenticar_eleitor(titulo, primeiros_cpf, chave_acesso_input, conexao):
             cursor.close()
 
 
-def encerrar_votacao(titulo, primeiros_cpf, chave, conexao):
 def registrar_voto(id_eleitor, numero_candidato):
     """
     Chama a função de gerar_protocolo e adiciona a cifra no protocolo gerado.
@@ -121,7 +121,7 @@ def registrar_voto(id_eleitor, numero_candidato):
     return protocolo
 
     
-def autenticar_eleitor(titulo, primeiros_cpf, chave_acesso_input, conexao):
+def autenticar_eleitor(titulo, primeiros_cpf, chave_acesso_input):
     """
     Valida as credenciais do eleitor e verifica se ele já realizou o voto.
 
@@ -139,7 +139,7 @@ def autenticar_eleitor(titulo, primeiros_cpf, chave_acesso_input, conexao):
               Se sucesso, inclui também o 'id_eleitor'.
     """
     try:
-        cursor = conexao.cursor(dictionary=True)
+        cursor = bd.conectar.cursor(dictionary=True)
         
         # consulta a base de dados pelo título
         query = "SELECT id_eleitor, cpf, chave_acesso, status_voto, is_mesario FROM eleitores WHERE titulo_eleitor = %s"
@@ -177,7 +177,7 @@ def autenticar_eleitor(titulo, primeiros_cpf, chave_acesso_input, conexao):
             cursor.close()
 
 
-def encerrar_votacao(titulo, primeiros_cpf, chave, conexao):
+def encerrar_votacao(titulo, primeiros_cpf, chave):
     """
     Encerra a votação com autenticação de um mesário
     e dupla confirmação da chave de acesso.
