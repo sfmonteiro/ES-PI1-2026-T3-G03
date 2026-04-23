@@ -202,8 +202,8 @@ while (op_mod != 0):
                                     bd.listar_candidatos()
                                     msg.alerta("[Votar]")
                                     # protocolo = mod_vot.registrar_voto(id_eleitor, numero_candidato)
-                                    # if protocolo is not None:
-                                    #     msg.sucesso(f"Votação finalizada protocolo: {protocolo}")
+                                    #if protocolo is not None:
+                                    #    msg.sucesso(f"Votação finalizada protocolo: {protocolo}")
 
                                 case 2:
                                     menu.limpar_terminal()

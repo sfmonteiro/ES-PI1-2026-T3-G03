@@ -1,10 +1,9 @@
 import random
 import string
-from funcoes import bd
-from funcoes import cripto
-from funcoes import logs
-from funcoes import msg
-
+from . import bd
+from . import cripto
+from . import logs
+from . import msg 
 
 def gerar_protocolo(numero_candidato):
     """
@@ -64,8 +63,64 @@ def registrar_voto(id_eleitor, numero_candidato):
     logs.log_protocolos(protocolo)
     return protocolo
 
+    
+def autenticar_eleitor(titulo, primeiros_cpf, chave_acesso_input, conexao):
+    """
+    Valida as credenciais do eleitor e verifica se ele já realizou o voto.
 
-def encerrar_votacao(titulo, primeiros_cpf, chave):
+    A função consulta o banco pelo título, decifra o CPF e a chave para 
+    conferência e checa o status do voto. Não altera dados no BD.
+
+    Args:
+        titulo (str): O número do título de eleitor informado.
+        primeiros_cpf (str): Os 4 primeiros dígitos do CPF para validação.
+        chave_acesso_input (str): A chave de acesso fornecida pelo eleitor.
+        conexao (mysql.connector.connection): Conexão ativa com o banco de dados.
+
+    Returns:
+        dict: Um dicionário com 'sucesso' (bool) e 'mensagem' (str). 
+              Se sucesso, inclui também o 'id_eleitor'.
+    """
+    try:
+        cursor = conexao.cursor(dictionary=True)
+        
+        # consulta a base de dados pelo título
+        query = "SELECT id_eleitor, cpf, chave_acesso, status_voto, is_mesario FROM eleitores WHERE titulo_eleitor = %s"
+        cursor.execute(query, (titulo,))
+        eleitor = cursor.fetchone()
+
+        if not eleitor:
+            return {"sucesso": False, "mensagem": "Eleitor não encontrado."}
+
+        # decifrar os dados para comparação
+        cpf_real = cripto.decifrar(eleitor['cpf'], "cpf")
+        chave_real = cripto.decifrar(eleitor['chave_acesso'], "chave")
+
+        # validação das credenciais
+        # compara os 4 primeiros dígitos do CPF e a chave de acesso
+        if cpf_real[:4] != primeiros_cpf or chave_real != chave_acesso_input:
+            return {"sucesso": False, "mensagem": "Dados de identificação inválidos."}
+
+        # verifica se já votou
+        if eleitor['status_voto']:
+            return {"sucesso": False, "mensagem": "ALERTA: Este eleitor já realizou o voto."}
+
+        # Se passou por tudo, identificação bem-sucedida
+        return {
+            "sucesso": True, 
+            "mensagem": "Eleitor autenticado com sucesso.",
+            "is_mesario": eleitor['is_mesario'],
+            "id_eleitor": eleitor['id_eleitor']
+        }
+
+    except Exception as e:
+        return {"sucesso": False, "mensagem": f"Erro na autenticação: {e}"}
+    finally:
+        if cursor:
+            cursor.close()
+
+
+def encerrar_votacao(titulo, primeiros_cpf, chave, conexao):
     """
     Encerra a votação com autenticação de um mesário
     e dupla confirmação da chave de acesso.
@@ -82,37 +137,26 @@ def encerrar_votacao(titulo, primeiros_cpf, chave):
     print("\nAutenticação do mesário")
 
     # ==========================
-    # AUTENTICAÇÃO (STUB)
+    # AUTENTICAÇÃO
     # ==========================
-    # Ainda não existe autenticar_eleitor(),
-    # Simula que teve autenticação:
-
-    autenticado = True
-    # qndo autenticar_eleitor() pronto:
-    # trocar autenticado = True p/ autenticado = autenticar_eleitor(titulo, primeiros_cpf, chave)
-
-    if not autenticado:
-        print("Falha na autenticação.")
+    
+    resultado = autenticar_eleitor(titulo, primeiros_cpf, chave, conexao)
+    
+    if not resultado["sucesso"] or not resultado.get("is_mesario"):
+        print("Falha na autenticação ou usuário não é mesário.")
         return False
-
+    
     print("Mesário autenticado.")
 
-    # ==========================
-    # DUPLA CONFIRMAÇÃO DA CHAVE
-    # ==========================
-    print("\nConfirmação de segurança")
-
-    chave_conf_1 = input("Digite a chave: ").strip()
-    chave_conf_2 = input("Confirme a chave: ").strip()
-
-    if chave_conf_1 != chave or chave_conf_2 != chave:
-        print("Chaves não conferem.")
+    confirma = input("Deseja realmente encerrar a votação? (Sim/Não): ").strip().lower()
+    if confirma != "sim":
         return False
 
-    print("Chave confirmada com sucesso.")
+    # Dupla confirmação da chave 
+    chave_conf = input("Confirme sua chave para fechar a urna: ").strip()
+    if chave_conf != chave:
+        print("Chave incorreta para encerramento.")
+        return False
 
-    # ==========================
-    # ENCERRAMENTO
-    # ==========================
-    print("\nVotação encerrada com sucesso.")
+    print("\nVotação encerrada com sucesso.") 
     return True
