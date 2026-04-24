@@ -188,18 +188,32 @@ while (op_mod != 0):
                     
                     #=================== ABRIR VOTAÇÃO ====================
                     case 1:
+                        menu.limpar_terminal()
+                        print(cor.azul("\n█▓▒▒░░░ ABRIR SISTEMA DE VOTAÇÃO ░░░▒▒▓█"))
+
+                        titulo = input("Título do mesário: ").strip()
+                        primeiros_cpf = input("4 primeiros dígitos do CPF: ").strip()
+                        chave = input("Chave de acesso: ").strip()
+
+                        votacao_aberta = mod_vot.abrir_votacao(titulo, primeiros_cpf, chave)
+
+                        if not votacao_aberta:
+                            msg.erro("Não foi possível abrir a votação.")
+                            input("\nPressione ENTER para continuar...")
+                            continue
+
+                        msg.sucesso("Sistema de votação aberto com sucesso!")
+                        input("\nPressione ENTER para acessar o menu da urna...")
+
                         op_votacao = 0
 
-                        while (op_votacao != 2):
-                            print(cor.azul("\n█▓▒▒░░░ ABRIR SISTEMA DE VOTAÇÃO ░░░▒▒▓█"))
-                            logs.zerezima()
+                        while op_votacao != 2:
+                            menu.limpar_terminal()
                             print(menu.vot_menu_votacao)
                             op_votacao = menu.selecionar_opcao()
 
                             match op_votacao:
                                 case 1:                                    
-                                    msg.sucesso("[Zerézima] realizada!")
-                                    bd.listar_candidatos()
                                     msg.alerta("[Votar]")
                                     # protocolo = mod_vot.registrar_voto(id_eleitor, numero_candidato)
                                     #if protocolo is not None:
