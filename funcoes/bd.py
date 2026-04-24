@@ -550,3 +550,113 @@ def remover_eleitor(valor_busca):
             cursor.close()
         if conexao and conexao.is_connected():
             conexao.close()
+
+# =====================================================================
+#                     5. APOIO AO MÓDULO DE VOTAÇÃO
+# =====================================================================
+
+def zerezima_bd():
+    """
+    Realiza a zerézima no banco de dados.
+
+    Remove todos os votos registrados anteriormente e redefine o status de voto de todos os eleitores para FALSE.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        bool: True se a zerézima for realizada com sucesso, False caso contrário.
+    """
+    conexao = conectar()
+
+    if not conexao:
+        return False
+
+    cursor = None
+
+    try:
+        cursor = conexao.cursor()
+
+        cursor.execute("DELETE FROM votos")
+        cursor.execute("UPDATE eleitores SET status_voto = FALSE")
+
+        conexao.commit()
+        return True
+    
+    except Error as erro:
+        msg.erro(f"Erro no banco {erro}")
+        return False
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao and conexao.is_connected():
+            conexao.close()  
+
+def listar_votos():
+    """
+    Lista todos os candidatos com a quantidade de votos recebidos.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        list: Lista de dicionários com os candidatos e total de votos.
+        False: Caso haja erro de conexão.
+        None: Caso nenhum candidato esteja cadastrado.
+    """
+    conexao = conectar()
+
+    if not conexao:
+        return False
+    
+    cursor = None
+
+    try:
+        cursor = conexao.cursor()
+
+        query = """
+        SELECT 
+            c.id_candidato,
+            c.numero_candidato,
+            c.nome_candidato,
+            c.partido_candidato,
+            COUNT(v.id_voto) AS total_votos
+        FROM candidatos c
+        LEFT JOIN votos v ON c.id_candidato = v.id_candidato
+        GROUP BY 
+            c.id_candidato,
+            c.numero_candidato,
+            c.nome_candidato,
+            c.partido_candidato
+        ORDER BY c.nome_candidato
+        """
+
+        cursor.execute(query)
+        votos = cursor.fetchall()
+
+        if not votos:
+            msg.alerta("Nenhum candidato cadastrado.")
+            return None
+
+        print(cor.magenta("\n█▓▒▒░░░    LISTAGEM DE VOTOS    ░░░▒▒▓█\n"))
+
+        for voto in votos:
+            print(
+                f"[{voto['numero_candidato']}] "
+                f"{voto['nome_candidato']} | "
+                f"{voto['partido_candidato']} | "
+                f"Votos: {voto['total_votos']}"
+            )
+        
+        return True
+    
+    except Error as erro:
+        msg.erro(f"Erro no banco {erro}")
+        return False
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao and conexao.is_connected():
+            conexao.close()

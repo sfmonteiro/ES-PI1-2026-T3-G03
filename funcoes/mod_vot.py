@@ -82,12 +82,15 @@ def autenticar_eleitor(titulo, primeiros_cpf, chave_acesso_input):
         dict: Um dicionário com 'sucesso' (bool) e 'mensagem' (str). 
               Se sucesso, inclui também o 'id_eleitor'.
     """
+    conexao = bd.conectar()
+    cursor = None
     try:
-        cursor = bd.conectar.cursor(dictionary=True)
+        cursor = conexao.cursor(dictionary=True)
         
         # consulta a base de dados pelo título
         query = "SELECT id_eleitor, cpf, chave_acesso, status_voto, is_mesario FROM eleitores WHERE titulo_eleitor = %s"
-        cursor.execute(query, (titulo,))
+        titulo_cripto = cripto.cifrar(titulo)
+        cursor.execute(query, (titulo_cripto,))
         eleitor = cursor.fetchone()
 
         if not eleitor:
@@ -119,6 +122,26 @@ def autenticar_eleitor(titulo, primeiros_cpf, chave_acesso_input):
     finally:
         if cursor:
             cursor.close()
+        if conexao and conexao.is_connected():
+            conexao.close()
+
+def abrir_votacao(titulo, primeiros_cpf, chave):
+    resultado = autenticar_eleitor(titulo, primeiros_cpf, chave)
+
+    if not resultado['sucesso']:
+        msg.erro(resultado['mensagem'])
+        return False
+    if not resultado['is_mesario']:
+        msg.erro("Apenas mesários podem abrir a votação.")
+        return False
+    
+    if not bd.zerezima_bd():
+        return False
+    votos = bd.listar_votos()
+    if votos is False:
+        return False
+    
+    return True
 
 
 def encerrar_votacao(titulo, primeiros_cpf, chave):
