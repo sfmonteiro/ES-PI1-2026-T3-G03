@@ -125,13 +125,6 @@ def gerar_chave_acesso(nome_completo):
     
     # monta a chave final
     chave = prefixo_primeiro + letra_segundo + digitos
-    # autor: Miguel Fernandes Monteiro
-    # RA: 25014808
-    eleitores = bd.listar_chaves_existente(chave) # Verifica se a chave já existe no banco de dados
-    if eleitores or eleitores is None:
-        # Se a chave já existir, gera uma nova
-        return gerar_chave_acesso(nome_completo)
-    
     return chave
 
 
