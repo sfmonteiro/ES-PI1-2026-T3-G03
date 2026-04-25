@@ -178,6 +178,7 @@ while (op_mod != 0):
 
         #=================== MODULO VOTAÇÃO ====================
         case 2:
+            menu.limpar_terminal()
             op_vot = -1
 
             while (op_vot != 0):
@@ -200,6 +201,7 @@ while (op_mod != 0):
                         if not votacao_aberta:
                             msg.erro("Não foi possível abrir a votação.")
                             input("\nPressione ENTER para continuar...")
+                            menu.limpar_terminal()
                             continue
 
                         msg.sucesso("Sistema de votação aberto com sucesso!")
@@ -241,6 +243,7 @@ while (op_mod != 0):
 
                     #=================== AUDITORIA ====================
                     case 2:
+                        menu.limpar_terminal()
                         op_auditoria = -1
 
                         while (op_auditoria != 0):
@@ -260,6 +263,7 @@ while (op_mod != 0):
 
                     #=================== RESULTADO ====================
                     case 3:
+                        menu.limpar_terminal()
                         op_resultado = -1
 
                         while (op_resultado != 0):
