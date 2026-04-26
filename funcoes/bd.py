@@ -8,6 +8,7 @@ from funcoes import mod_ger, msg, cripto
 from dotenv import load_dotenv
 import os
 from funcoes import cor
+from funcoes import menu
 
 load_dotenv()
 
@@ -104,6 +105,7 @@ def cadastrar_eleitor(nome, titulo, cpf, is_mesario):
                 continue # volta para o início e gera nova chave
             else:
                 # se o erro for CPF ou Título, para o processo
+                menu.mostrar_ger_cad_eleitores
                 msg.erro("Erro: CPF ou Título já cadastrado no sistema.")
                 tentando_cadastrar = False
                 return False
@@ -301,7 +303,7 @@ def listar_eleitores():
         for eleitor in eleitores:
             id_eleitor, nome, titulo, cpf, is_mesario= eleitor
             mesario = "SIM" if is_mesario == 1 else "NÃO"
-            print(f"{cor.ciano("[" + str(id_eleitor) + "]")} {nome} | Título: {titulo} | CPF: {cpf} | Mesário: {mesario}")
+        print(f"{cor.ciano(f'[{id_eleitor}]')} {nome} | Título: {titulo} | CPF: {cpf} | Mesário: {mesario}")
         return eleitores
 
     except Error as erro:
