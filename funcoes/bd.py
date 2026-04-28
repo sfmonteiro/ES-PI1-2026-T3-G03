@@ -303,7 +303,7 @@ def listar_eleitores():
         for eleitor in eleitores:
             id_eleitor, nome, titulo, cpf, is_mesario= eleitor
             mesario = "SIM" if is_mesario == 1 else "NÃO"
-        print(f"{cor.ciano(f'[{id_eleitor}]')} {nome} | Título: {titulo} | CPF: {cpf} | Mesário: {mesario}")
+            print(f"{cor.ciano(f'[{id_eleitor}]')} {nome} | Título: {titulo} | CPF: {cpf} | Mesário: {mesario}")
         return eleitores
 
     except Error as erro:
@@ -635,7 +635,7 @@ def listar_votos():
     cursor = None
 
     try:
-        cursor = conexao.cursor()
+        cursor = conexao.cursor(dictionary=True)
 
         query = """
         SELECT 
