@@ -262,11 +262,39 @@ while (op_mod != 0):
                             op_votacao = menu.selecionar_opcao()
 
                             match op_votacao:
-                                case 1:                                    
+                                case 1:
                                     msg.alerta("[Votar]")
-                                    # protocolo = mod_vot.registrar_voto(id_eleitor, numero_candidato)
-                                    #if protocolo is not None:
-                                    #    msg.sucesso(f"Votação finalizada protocolo: {protocolo}")
+
+                                    titulo = input("Título do eleitor: ").strip()
+                                    primeiros_cpf = input("4 primeiros dígitos do CPF: ").strip()
+                                    chave = input("Chave de acesso: ").strip() 
+
+    
+                                    resultado = mod_vot.autenticar_eleitor(titulo, primeiros_cpf, chave)
+
+                                    if resultado["sucesso"]:
+                                        msg.sucesso(resultado["mensagem"])
+                                        id_eleitor = resultado["id_eleitor"]
+        
+                                    votacao_concluida = False
+        
+                                    while not votacao_concluida:
+                                        numero_candidato = int(input("\nDigite o número do seu candidato: ").strip())
+            
+                                        protocolo = mod_vot.registrar_voto(id_eleitor, numero_candidato)
+            
+                                        if protocolo == "REPETIR":
+                                            msg.erro("Você já votou! Não é permitido votar mais de uma vez.")
+                                            votacao_concluida = True
+                                        elif protocolo:
+                                            msg.sucesso(f"Votação finalizada! Protocolo gerado: {protocolo}")
+                                            votacao_concluida = True 
+                                        else:
+                                            msg.erro("Erro crítico ao registrar o voto.")
+                                            votacao_concluida = True
+                
+                                    else:
+                                        msg.erro(resultado["mensagem"])
 
                                 case 2:
                                     menu.limpar_terminal()

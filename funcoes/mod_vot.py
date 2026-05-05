@@ -53,15 +53,30 @@ def registrar_voto(id_eleitor, numero_candidato):
     Returns:
         Número de protocolo.
     """
+        
+    candidato = bd.listar_candidatos_numero(numero_candidato)
+
+    if candidato:
+        print(f"Candidato: {candidato['nome_candidato']} | Partido: {candidato['partido_candidato']}")
+        id_candidato_db = candidato['id_candidato']
+    else:
+        msg.alerta("Candidato inexistente! Seu voto será computado como NULO.")
+        id_candidato_db = None
+    
+    confirma = input(f"Confirma o voto no número {numero_candidato}? (S/N): ").upper()
+
+    if confirma != 'S':
+        msg.alerta("Voto cancelado. Retornando à inserção de número.")
+        return "REPETIR"
+
     protocolo = gerar_protocolo(numero_candidato)
     protocolo_cifra = cripto.cifrar(protocolo)
-    candidato = bd.listar_candidatos_numero(numero_candidato)
-    if candidato == None:
-        msg.erro("Esse candidato não existe.")
-        return None
-    bd.insert_voto(candidato['id_candidato'], protocolo_cifra)
+
+    bd.insert_voto(id_candidato_db, protocolo_cifra)
     bd.editar_status_voto(id_eleitor)
+
     logs.log_protocolos(protocolo)
+
     return protocolo
 
     
@@ -158,8 +173,6 @@ def encerrar_votacao(titulo, primeiros_cpf, chave):
         bool: True se a votação for encerrada com sucesso, False caso contrário.
     """
 
-    print("\nAutenticação do mesário")
-
     # ==========================
     # AUTENTICAÇÃO
     # ==========================
@@ -169,8 +182,6 @@ def encerrar_votacao(titulo, primeiros_cpf, chave):
     if not resultado["sucesso"] or not resultado.get("is_mesario"):
         print("Falha na autenticação ou usuário não é mesário.")
         return False
-    
-    print("Mesário autenticado.")
 
     confirma = input("Deseja realmente encerrar a votação? (Sim/Não): ").strip().lower()
     if confirma != "sim":
