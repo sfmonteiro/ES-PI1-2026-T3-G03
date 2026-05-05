@@ -185,7 +185,7 @@ def mostrar_ger_eleitores_edit():
     print(f"""
 {cor.ciano("""
 ╔══════════════════════════════════════════╗
-║                ELEITORES                 ║
+║                 ELEITOR                  ║
 ╚══════════════════════════════════════════╝
 """)}
 [1]  EDITAR ELEITOR
@@ -193,7 +193,7 @@ def mostrar_ger_eleitores_edit():
 {cor.vermelho("[0]  VOLTAR")}
 """)
 
-def mostrar_ger_list_eleitores():
+def mostrar_ger_eleitores_cadastrados():
     """
     Exibe o título do menu de eleitores cadastrados para listagem.
 

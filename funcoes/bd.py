@@ -8,6 +8,7 @@ from funcoes import mod_ger, msg, cripto
 from dotenv import load_dotenv
 import os
 from funcoes import cor
+from funcoes import menu
 
 load_dotenv()
 
@@ -45,58 +46,79 @@ def conectar():
 #                           1. CREATE
 # =====================================================================
 
-def cadastrar_eleitor(nome, titulo, cpf, chave_acesso, is_mesario):
+def cadastrar_eleitor(nome, titulo, cpf, is_mesario):
     """
-    Cadastra um eleitor no banco de dados com base nas variáveis inseridas.
+    Cadastra um eleitor, garantindo que a chave de acesso seja única no banco.
 
     Args:
         nome (str): Nome completo do eleitor.
-        titulo (int): Título de eleitor.
-        cpf (int): CPF do eleitor.
-        is_mesario (bool): Indica se o eleitor é mesário.
-        chave_acesso (str): Chave de acesso gerada para o eleitor.
+        titulo (str): Título de eleitor (12 dígitos).
+        cpf (str): CPF do eleitor (11 dígitos).
+        is_mesario (bool): Indica se o eleitor atuará como mesário.
 
     Returns:
-        True: Quando o eleitor é cadastrado com sucesso.
-        False: Quando há CPF ou título já cadastrado, ou quando há erro de conexão com o banco.
+        bool: True para sucesso, False se houver erro de validação ou duplicidade de documentos.
     """
+    # validação Matemática === [DELETAR: AQUI, O USUARIO TEM Q DIGITAR TUDO PRA DEPOIS DAR UM ERRO E VOLTAR PRO MENU, DEIXEI VALIDANDO NO INPUT, POIS SE ESTIVER ERRADO, ELE ENTRA NO LOOP ATE DIGITAR CERTO, INDICANDO QUAL FOI O DOCUMENTO Q DEU ERRO.]
+    # if not mod_validacao.validar_cpf(cpf) or not mod_validacao.validar_titulo(titulo):
+    #     msg.erro("Documentos matematicamente inválidos!")
+    #     return False
+
     conexao = conectar()
     if not conexao:
         return False
 
-    cursor = None
-    try:
-        cursor = conexao.cursor()
+    tentando_cadastrar = True
+    
+    while tentando_cadastrar:
+        # geração de nova chave a cada tentativa, para evitar colisões
+        chave_bruta = mod_ger.gerar_chave_acesso(nome)
 
-        query = """
-        INSERT INTO eleitores
-        (nome, titulo_eleitor, cpf, chave_acesso, is_mesario, status_voto)
-        VALUES (%s, %s, %s, %s, %s, %s)
-        """
+        # criptografia
+        cpf_cifrado = cripto.cifrar(cpf) 
+        chave_cifrada = cripto.cifrar(chave_bruta)
+        titulo_cifrado = cripto.cifrar(titulo)
 
-        valores = (nome, titulo, cpf, chave_acesso, is_mesario, False)
+        try:
+            cursor = conexao.cursor()
+            query = """
+            INSERT INTO eleitores 
+            (nome, titulo_eleitor, cpf, chave_acesso, is_mesario, status_voto) 
+            VALUES (%s, %s, %s, %s, %s, %s)
+            """
+            valores = (nome, titulo_cifrado, cpf_cifrado, chave_cifrada, is_mesario, False)
 
-        cursor.execute(query, valores)
-        conexao.commit()
+            cursor.execute(query, valores)
+            conexao.commit()
 
-        if cursor.rowcount > 0:
+            # Se chegou aqui funcionou e a chave é única, então informa o usuário e sai do loop
+            mod_ger.mostrar_chave_acesso(chave_bruta)
+            tentando_cadastrar = False # sai do loop
             return True
-        else:
+
+        except IntegrityError as err:
+            # verifica se o erro foi especificamente na chave_acesso (duplicidade)
+            erro_msg = str(err)
+            if "chave_acesso" in erro_msg:
+                # Log interno: avisa que houve colisão de chave e tentará gerar outra
+                # print("Aviso: Chave duplicada gerada. Tentando nova combinação...") [DELETER: USUARIO NAO PRECISA VER QUE DEU UM ERRO INTERNO]
+                continue # volta para o início e gera nova chave
+            else:
+                # se o erro for CPF ou Título, para o processo
+                menu.mostrar_ger_cad_eleitores
+                msg.erro("Erro: CPF ou Título já cadastrado no sistema.")
+                tentando_cadastrar = False
+                return False
+        
+        except Error as e:
+            msg.erro(f"Erro inesperado no banco: {e}")
             return False
+        finally:
+            if 'cursor' in locals():
+                cursor.close()
 
-    except IntegrityError:
-        msg.erro("CPF ou título de eleitor já cadastrado.")
-        return False
-
-    except Error as erro:
-        msg.erro(f"Erro no banco: {erro}")
-        return False
-
-    finally:
-        if cursor:
-            cursor.close()
-        if conexao and conexao.is_connected():
-            conexao.close()
+    if conexao.is_connected():
+        conexao.close()
             
 def insert_voto(id_candidato, protocolo):
     """
@@ -153,42 +175,42 @@ def insert_voto(id_candidato, protocolo):
 #                            2. READ
 # =====================================================================
 
-def listar_chaves_existente(chave_acesso):
-    """
-    Lista todas as chaves de acesso dos eleitores cadastrados no banco de dados.
+# def listar_chaves_existente(chave_acesso):
+#     """
+#     Lista todas as chaves de acesso dos eleitores cadastrados no banco de dados.
 
-    Args:
-        chave_acesso (str): A chave de acesso a ser pesquisada.
+#     Args:
+#         chave_acesso (str): A chave de acesso a ser pesquisada.
 
-    Returns:
-        list: Lista de tuplas com os dados dos eleitores que possuem a chave de acesso especificada.
-        None: Se houver algum erro na consulta.
-    """
-    conexao = conectar()
-    if not conexao:
-        return False
+#     Returns:
+#         list: Lista de tuplas com os dados dos eleitores que possuem a chave de acesso especificada.
+#         None: Se houver algum erro na consulta.
+#     """
+#     conexao = conectar()
+#     if not conexao:
+#         return False
 
-    try:
-        cursor = conexao.cursor()
+#     try:
+#         cursor = conexao.cursor()
 
-        query = """
-        SELECT *
-        FROM eleitores
-        WHERE chave_acesso = %s
-        """
-        cursor.execute(query, (chave_acesso,))
-        eleitores = cursor.fetchall()
-        return eleitores
+#         query = """
+#         SELECT *
+#         FROM eleitores
+#         WHERE chave_acesso = %s
+#         """
+#         cursor.execute(query, (chave_acesso,))
+#         eleitores = cursor.fetchall()
+#         return eleitores
 
-    except Error as erro:
-        msg.alerta(f"Erro ao listar chaves existentes: {erro}")
-        return None
+#     except Error as erro:
+#         msg.alerta(f"Erro ao listar chaves existentes: {erro}")
+#         return None
 
-    finally:
-        if cursor:
-            cursor.close()
-        if conexao and conexao.is_connected():
-            conexao.close()
+#     finally:
+#         if cursor:
+#             cursor.close()
+#         if conexao and conexao.is_connected():
+#             conexao.close()
 
 def listar_candidatos():
     """
@@ -281,7 +303,7 @@ def listar_eleitores():
         for eleitor in eleitores:
             id_eleitor, nome, titulo, cpf, is_mesario= eleitor
             mesario = "SIM" if is_mesario == 1 else "NÃO"
-            print(f"{cor.ciano("[" + str(id_eleitor) + "]")} {nome} | Título: {titulo} | CPF: {cpf} | Mesário: {mesario}")
+            print(f"{cor.ciano(f'[{id_eleitor}]')} {nome} | Título: {titulo} | CPF: {cpf} | Mesário: {mesario}")
         return eleitores
 
     except Error as erro:
@@ -613,7 +635,7 @@ def listar_votos():
     cursor = None
 
     try:
-        cursor = conexao.cursor()
+        cursor = conexao.cursor(dictionary=True)
 
         query = """
         SELECT 

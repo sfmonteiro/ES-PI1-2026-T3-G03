@@ -10,17 +10,36 @@ import random
 
 
 
-def input_validar_nome_completo ():
-    nomeErrado = True
-    while nomeErrado:
-        nome = input("Digite seu nome completo:  ").strip()
+def validar_nome(nome):
         if nome == "" or len(nome.split()) < 2 or any(char.isdigit() for char in nome):
-            menu.limpar_terminal()
-            msg.erro("Nome inválido. Digite seu nome e sobrenome.")
-            input(cor.amarelo(">> Pressione ENTER para tentar novamente...  "))
-            menu.limpar_terminal()
+            return False
         else:
-            return nome
+            return True
+        
+def input_voltar():
+
+    opcao = input(cor.amarelo(f"\n>> Pressione {cor.vermelho("[0] para voltar ao menu")}{cor.amarelo(", ou ENTER para tentar novamente...  ")}")).strip()
+    menu.limpar_terminal()
+    menu.mostrar_ger_cad_eleitores()
+    if opcao == "0":
+        return True
+    else:
+        return False
+    
+
+# ====FUNÇAO PRA CASO PERMITIR O USUARIO A CANCELAR O CADASTRO DURANTE O PROCESSO E VOLTAR PARA O MENU
+# def tentar_voltar(opcao):  
+#     if opcao == "0":
+#         return True
+#     return False
+#                     opcao_voltar = input(f"\n>> Digite {cor.vermelho("[0] para voltar ao menu")}, ou {cor.amarelo("qualquer tecla")} para tentar novamente...  ").strip()
+#                     if tentar_voltar(opcao_voltar):
+#                         return None
+# MAIN::                    if dict_cadastro is None:
+                            # msg.alerta("Voltando para o menu anterior...")
+                            # continue
+
+#===================================================================================================================
 
 def menu_cad_eleitor ():
     """
@@ -41,14 +60,24 @@ def menu_cad_eleitor ():
         "nome": "",
         "titulo_eleitor": "",
         "cpf": "",
-        "chave_acesso": "",
         "is_mesario": ""
     }
     for i in range(4):
         
-        print(cor.ciano(f"Passo {i+1} de 5..."))
+        print(cor.ciano(f"Passo {i+1} de 4..."))
         if i == 0:
-            dict_cadastro["nome"] = input_validar_nome_completo()
+            nome_errado = True
+            while nome_errado:
+                nome = input("Digite seu nome completo:  ")
+                if validar_nome(nome):
+                    dict_cadastro["nome"] = nome
+                    nome_errado = False
+                else:
+                    menu.limpar_terminal()
+                    msg.erro("Nome inválido. Digite seu nome e sobrenome.")
+                    voltar = input_voltar()
+                    if voltar:
+                        return None
 
         elif i == 1:
             titulo_errado = True
@@ -60,8 +89,9 @@ def menu_cad_eleitor ():
                 else:
                     menu.limpar_terminal()
                     msg.erro("Título de eleitor inválido. Digite um número válido.")
-                    input(cor.amarelo(">> Pressione ENTER para tentar novamente...  "))
-                    menu.limpar_terminal()
+                    voltar = input_voltar()
+                    if voltar:
+                        return None
 
         elif i == 2:
             cpf_errado = True
@@ -73,8 +103,9 @@ def menu_cad_eleitor ():
                 else:
                     menu.limpar_terminal()
                     msg.erro("CPF inválido. Digite um número válido.")
-                    input(cor.amarelo(">> Pressione ENTER para tentar novamente...  "))
-                    menu.limpar_terminal()
+                    voltar = input_voltar()
+                    if voltar:
+                        return None
 
         elif i == 3:
             opcao_errada = True
@@ -82,12 +113,13 @@ def menu_cad_eleitor ():
                 opcao = input(f"É mesário? {cor.verde("[1] SIM")} {cor.vermelho("[0] NÃO")} : ").strip()
                 if opcao in ["0", "1"]:
                     opcao_errada = False
-                # elif opcao not in ["0", "1"] or opcao == "": 
                 else:
                     menu.limpar_terminal()
-                    msg.erro("Opção inválida. Digite [1] para SIM ou [0] para NÃO.")
-                    input(cor.amarelo(">> Pressione ENTER para tentar novamente...  "))
-                    menu.limpar_terminal()
+                    msg.erro(f"Opção inválida. Digite {cor.verde('[1] para SIM')} ou {cor.vermelho('[0] para NÃO')}.")
+                    voltar = input_voltar()
+                    if voltar:
+                        return None
+
             dict_cadastro["is_mesario"] = True if opcao == "1" else False
     
     menu.limpar_terminal()
@@ -125,13 +157,6 @@ def gerar_chave_acesso(nome_completo):
     
     # monta a chave final
     chave = prefixo_primeiro + letra_segundo + digitos
-    # autor: Miguel Fernandes Monteiro
-    # RA: 25014808
-    eleitores = bd.listar_chaves_existente(chave) # Verifica se a chave já existe no banco de dados
-    if eleitores or eleitores is None:
-        # Se a chave já existir, gera uma nova
-        return gerar_chave_acesso(nome_completo)
-    
     return chave
 
 
