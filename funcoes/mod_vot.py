@@ -137,11 +137,15 @@ def abrir_votacao(titulo, primeiros_cpf, chave):
     
     if not bd.zerezima_bd():
         return False
+    
+    arquivo_log = logs.zerezima()
+
     votos = bd.listar_votos()
+
     if votos is False:
         return False
     
-    return True
+    return arquivo_log
 
 
 def encerrar_votacao(titulo, primeiros_cpf, chave):

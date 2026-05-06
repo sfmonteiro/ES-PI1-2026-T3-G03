@@ -243,9 +243,9 @@ while (op_mod != 0):
                         primeiros_cpf = input("4 primeiros dígitos do CPF: ").strip()
                         chave = input("Chave de acesso: ").strip()
 
-                        votacao_aberta = mod_vot.abrir_votacao(titulo, primeiros_cpf, chave)
+                        arquivo_log = mod_vot.abrir_votacao(titulo, primeiros_cpf, chave)
 
-                        if not votacao_aberta:
+                        if not arquivo_log:
                             msg.erro("Não foi possível abrir a votação.")
                             input("\nPressione ENTER para continuar...")
                             menu.limpar_terminal()
@@ -279,6 +279,7 @@ while (op_mod != 0):
                                     resultado = mod_vot.encerrar_votacao(titulo, primeiros_cpf, chave)
 
                                     if resultado:
+                                        logs.encerramento(arquivo_log)
                                         msg.sucesso("Sistema de votação encerrado.")
                                     else:
                                         msg.erro("Falha ao encerrar votação.")
