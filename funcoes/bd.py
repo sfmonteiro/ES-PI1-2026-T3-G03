@@ -240,17 +240,14 @@ def listar_candidatos():
 
         if not candidatos:
             msg.alerta("Nenhum candidato cadastrado.")
-            return
+            return []
 
-        print(cor.magenta("\n█▓▒▒░░░    LISTAGEM DE CANDIDATOS    ░░░▒▒▓█\n"))
-
-        for candidato in candidatos:
-            print(f"[{candidato['numero_candidato']}] {candidato['nome_candidato']} | {candidato['partido_candidato']}")
         return candidatos
 
     except Error as erro:
         msg.alerta(f"Erro ao listar candidatos: {erro}")
-
+        return None
+    
     finally:
         if cursor:
             cursor.close()
@@ -299,6 +296,10 @@ def listar_eleitores():
 
         cursor.execute(query)
         eleitores = cursor.fetchall()
+
+        if not eleitores:
+            msg.alerta("Nenhum eleitor cadastrado.")
+            return []
 
         for eleitor in eleitores:
             id_eleitor, nome, titulo, cpf, is_mesario= eleitor
@@ -600,7 +601,7 @@ def zerezima_bd():
         cursor = conexao.cursor()
 
         cursor.execute("DELETE FROM votos")
-        cursor.execute("UPDATE eleitores SET status_voto = FALSE")
+        cursor.execute("UPDATE eleitores SET status_voto = 0")
 
         conexao.commit()
         return True

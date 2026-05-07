@@ -12,6 +12,7 @@ from funcoes import mod_ger
 from funcoes import cripto
 from funcoes import mod_vot
 import time
+from getpass import getpass
 
 #===================================================================================================================
 #                                                     MAIN
@@ -226,10 +227,11 @@ while (op_mod != 0):
         #=================== MODULO VOTAÇÃO ====================
         case 2:
             menu.limpar_terminal()
+            
             op_vot = -1
 
             while (op_vot != 0):
-                print(menu.vot_menu)
+                menu.mostrar_vot()
                 op_vot = menu.selecionar_opcao()
 
                 match op_vot:
@@ -237,82 +239,134 @@ while (op_mod != 0):
                     #=================== ABRIR VOTAÇÃO ====================
                     case 1:
                         menu.limpar_terminal()
-                        print(cor.azul("\n█▓▒▒░░░ ABRIR SISTEMA DE VOTAÇÃO ░░░▒▒▓█"))
-
+                        menu.mostrar_vot_abertura()
+                        
+                        print(cor.ciano("Para abrir a votação, entre com as credenciais de um MESÁRIO autorizado:\n"))
+                        time.sleep(1)
+                        print(cor.ciano("Passo 1 de 3..."))
                         titulo = input("Título do mesário: ").strip()
+                        print(cor.ciano("Passo 2 de 3..."))
                         primeiros_cpf = input("4 primeiros dígitos do CPF: ").strip()
+                        print(cor.ciano("Passo 3 de 3..."))
                         chave = input("Chave de acesso: ").strip()
 
                         arquivo_log = mod_vot.abrir_votacao(titulo, primeiros_cpf, chave)
 
                         if not arquivo_log:
                             msg.erro("Não foi possível abrir a votação.")
-                            input("\nPressione ENTER para continuar...")
+                            input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
                             menu.limpar_terminal()
                             continue
-
+                        
+                        menu.limpar_terminal()
+                        menu.mostrar_vot_abertura()
                         msg.sucesso("Sistema de votação aberto com sucesso!")
-                        input("\nPressione ENTER para acessar o menu da urna...")
+                        input(cor.amarelo("\n>> Pressione ENTER para acessar o menu da urna..."))
 
                         op_votacao = 0
 
-                        while op_votacao != 2:
+                        while op_votacao != -1:
                             menu.limpar_terminal()
-                            print(menu.vot_menu_votacao)
+                            menu.mostrar_vot_menu_votacao()
                             op_votacao = menu.selecionar_opcao()
 
                             match op_votacao:
                                 case 1:
-                                    msg.alerta("[Votar]")
+                                    menu.limpar_terminal()
+                                    menu.mostrar_vot_votacao()
 
+                                    print(cor.ciano("Para votar, entre com suas credenciais de eleitor:\n"))
+                                    time.sleep(1)
+                                    print(cor.ciano("Passo 1 de 3..."))
                                     titulo = input("Título do eleitor: ").strip()
+                                    print(cor.ciano("Passo 2 de 3..."))
                                     primeiros_cpf = input("4 primeiros dígitos do CPF: ").strip()
-                                    chave = input("Chave de acesso: ").strip() 
-
+                                    print(cor.ciano("Passo 3 de 3..."))
+                                    chave = input("Chave de acesso: ").strip()
+                                    time.sleep(1)
     
                                     resultado = mod_vot.autenticar_eleitor(titulo, primeiros_cpf, chave)
+                                     
+                                    if not resultado["sucesso"]:
+                                        msg.erro(resultado["mensagem"])
+                                        input(cor.amarelo("\n>> Pressione ENTER para tentar novamente...  "))
+                                        continue
 
-                                    if resultado["sucesso"]:
-                                        msg.sucesso(resultado["mensagem"])
-                                        id_eleitor = resultado["id_eleitor"]
-        
+                                    menu.limpar_terminal()
+                                    menu.mostrar_vot_votacao()
+
                                     votacao_concluida = False
         
                                     while not votacao_concluida:
-                                        numero_candidato = int(input("\nDigite o número do seu candidato: ").strip())
-            
-                                        protocolo = mod_vot.registrar_voto(id_eleitor, numero_candidato)
-            
-                                        if protocolo == "REPETIR":
-                                            msg.erro("Você já votou! Não é permitido votar mais de uma vez.")
-                                            votacao_concluida = True
-                                        elif protocolo:
-                                            msg.sucesso(f"Votação finalizada! Protocolo gerado: {protocolo}")
-                                            votacao_concluida = True 
-                                        else:
-                                            msg.erro("Erro crítico ao registrar o voto.")
-                                            votacao_concluida = True
+                                        if resultado["sucesso"]:
+                                            msg.sucesso(resultado["mensagem"])
+                                            id_eleitor = resultado["id_eleitor"]
+
+                                            print(cor.amarelo("\n>> Carregando lista de candidatos..."))
+                                            time.sleep(2)
+
+                                            menu.limpar_terminal()
+                                            menu.mostrar_vot_votacao()
+
+                                            menu.mostrar_vot_candidatos()
+                                            candidatos = bd.listar_candidatos()
+                                            for candidato in candidatos:
+                                                print(f"{cor.ciano(f'[{candidato['numero_candidato']}]')} {candidato['nome_candidato']} | {candidato['partido_candidato']}")
+                                                
+                                            if not candidatos:
+                                                input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
+                                                menu.limpar_terminal()
+                                                continue
+                        
+                                            numero_candidato = int(input("\nDigite o número do seu candidato: ").strip())
+                
+                                            protocolo = mod_vot.registrar_voto(id_eleitor, numero_candidato)
+                
+                                            if protocolo == "REPETIR":
+                                                msg.erro("Você já votou! Não é permitido votar mais de uma vez.")
+                                                votacao_concluida = False
+                                            elif protocolo:
+
+                                                menu.limpar_terminal()
+                                                menu.mostrar_vot_votacao()
+                                                msg.sucesso(f"Votação finalizada!")
+                                                mod_vot.mostrar_protocolo(protocolo)
+                                                input(cor.amarelo("\n>> Pressione ENTER para finalizar...  "))
+
+                                                votacao_concluida = True 
+                                            else:
+                                                msg.erro("Erro crítico ao registrar o voto.")
+                                                votacao_concluida = True
                 
                                     else:
                                         msg.erro(resultado["mensagem"])
 
                                 case 2:
                                     menu.limpar_terminal()
-                                    print(cor.azul("\n█▓▒▒░░░ ENCERRAR VOTAÇÃO ░░░▒▒▓█"))
+                                    menu.mostrar_vot_encerrar()
+                                    
+                                    print(cor.ciano("Para encerrar a votação, entre com as credenciais de um MESÁRIO autorizado:\n"))
+                                    time.sleep(1)
 
+                                    print(cor.ciano("Passo 1 de 3..."))
                                     titulo = input("Título do mesário: ").strip()
+                                    print(cor.ciano("Passo 2 de 3..."))
                                     primeiros_cpf = input("4 primeiros dígitos do CPF: ").strip()
-                                    chave = input("Chave de acesso: ").strip() #usar getpass ??
+                                    print(cor.ciano("Passo 3 de 3..."))
+                                    chave = input("Chave de acesso: ").strip().upper() #usar getpass ??
 
                                     resultado = mod_vot.encerrar_votacao(titulo, primeiros_cpf, chave)
 
                                     if resultado:
                                         logs.encerramento(arquivo_log)
                                         msg.sucesso("Sistema de votação encerrado.")
+                                        time.sleep(1.5)
+
+                                        break
                                     else:
                                         msg.erro("Falha ao encerrar votação.")
 
-                                    input("\nPressione ENTER para continuar...")
+                                    input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
 
                                 case _:
                                     msg.erro("Opção inválida.")

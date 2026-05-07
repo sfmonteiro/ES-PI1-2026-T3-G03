@@ -215,7 +215,9 @@ def mostrar_ger_eleitores_cadastrados():
 #                                        MENUS DO MODULO DE VOTAÇÃO
 #===================================================================================================================
 
-vot_menu = f"""
+def mostrar_vot():
+    
+    print(f"""
 {cor.verde("""
 ╔══════════════════════════════════════════╗
 ║                 VOTAÇÃO                  ║
@@ -225,14 +227,53 @@ vot_menu = f"""
 [2]  AUDITORIA DO SISTEMA DE VOTAÇÃO
 [3]  RESULTADO DA VOTAÇÃO
 {cor.vermelho("[0]  VOLTAR")}
-"""
-vot_menu_votacao = f"""
+""")
+    
+def mostrar_vot_abertura():
+    
+    print(f"""
+{cor.verde("""
 ╔══════════════════════════════════════════╗
-║            SISTEMA DE VOTAÇÃO            ║
+║           ABERTURA DA VOTAÇÃO            ║
 ╚══════════════════════════════════════════╝
-[1]  VOTAR
-[2]  ENCERRAR SISTEMA DE VOTAÇÃO
-"""
+""")}""")
+
+def mostrar_vot_menu_votacao():
+
+    print(f"""
+{cor.verde("""
+╔══════════════════════════════════════════╗
+║                 VOTAÇÃO                  ║
+╚══════════════════════════════════════════╝
+""")}
+{cor.verde("[1]  VOTAR")}
+{cor.vermelho("[2]  ENCERRAR VOTAÇÃO")}
+""")
+    
+def mostrar_vot_votacao():
+
+    print(f"""
+{cor.verde("""
+╔══════════════════════════════════════════╗
+║                 VOTAÇÃO                  ║
+╚══════════════════════════════════════════╝
+""")}""")
+    
+def mostrar_vot_encerrar():
+
+    print(f"""
+{cor.verde("""
+╔══════════════════════════════════════════╗
+║         ENCERRAMENTO DA VOTAÇÃO          ║
+╚══════════════════════════════════════════╝
+""")}""")
+    
+def mostrar_vot_candidatos():
+
+    print(f"""{cor.magenta("""╔════════════════════════════════╗
+║           CANDIDATOS           ║
+╚════════════════════════════════╝
+""")}""")
 
 vot_menu_auditoria = f"""
 {cor.ciano("""

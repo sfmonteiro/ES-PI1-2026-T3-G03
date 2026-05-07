@@ -1,5 +1,8 @@
 import random
 import string
+import time
+
+from funcoes import cor
 from . import bd
 from . import cripto
 from . import logs
@@ -56,8 +59,9 @@ def registrar_voto(id_eleitor, numero_candidato):
         
     candidato = bd.listar_candidatos_numero(numero_candidato)
 
+
     if candidato:
-        print(f"Candidato: {candidato['nome_candidato']} | Partido: {candidato['partido_candidato']}")
+        print(f"\nCandidato: {candidato['nome_candidato']} | Partido: {candidato['partido_candidato']}")
         id_candidato_db = candidato['id_candidato']
     else:
         msg.alerta("Candidato inexistente! Seu voto será computado como NULO.")
@@ -66,7 +70,8 @@ def registrar_voto(id_eleitor, numero_candidato):
     confirma = input(f"Confirma o voto no número {numero_candidato}? (S/N): ").upper()
 
     if confirma != 'S':
-        msg.alerta("Voto cancelado. Retornando à inserção de número.")
+        msg.alerta("Voto cancelado. Retornando à inserção de número...")
+        time.sleep(1.5)
         return "REPETIR"
 
     protocolo = gerar_protocolo(numero_candidato)
@@ -119,7 +124,7 @@ def autenticar_eleitor(titulo, primeiros_cpf, chave_acesso_input):
         # compara os 4 primeiros dígitos do CPF e a chave de acesso
         if cpf_real[:4] != primeiros_cpf or chave_real != chave_acesso_input:
             return {"sucesso": False, "mensagem": "Dados de identificação inválidos."}
-
+        
         # verifica se já votou
         if eleitor['status_voto']:
             return {"sucesso": False, "mensagem": "ALERTA: Este eleitor já realizou o voto."}
@@ -140,25 +145,79 @@ def autenticar_eleitor(titulo, primeiros_cpf, chave_acesso_input):
         if conexao and conexao.is_connected():
             conexao.close()
 
+def autenticar_mesario(titulo, primeiros_cpf, chave_acesso_input):
+    """
+    Valida as credenciais do mesário e verifica se ele está autorizado.
+
+    A função consulta o banco pelo título, decifra o CPF e a chave para 
+    conferência e checa o status do mesário. Não altera dados no BD.
+
+    Args:
+        titulo (str): O número do título de eleitor informado.
+        primeiros_cpf (str): Os 4 primeiros dígitos do CPF para validação.
+        chave_acesso_input (str): A chave de acesso fornecida pelo eleitor.
+        conexao (mysql.connector.connection): Conexão ativa com o banco de dados.
+
+    Returns:
+        dict: Um dicionário com 'sucesso' (bool) e 'mensagem' (str). 
+              Se sucesso, inclui também o 'id_eleitor'.
+    """
+    conexao = bd.conectar()
+    cursor = None
+    try:
+        cursor = conexao.cursor(dictionary=True)
+        
+        # consulta a base de dados pelo título
+        query = "SELECT id_eleitor, cpf, chave_acesso, status_voto, is_mesario FROM eleitores WHERE titulo_eleitor = %s"
+        titulo_cripto = cripto.cifrar(titulo)
+        cursor.execute(query, (titulo_cripto,))
+        eleitor = cursor.fetchone()
+
+        if not eleitor:
+            return {"sucesso": False, "mensagem": "Mesário não encontrado."}
+
+        # decifrar os dados para comparação
+        cpf_real = cripto.decifrar(eleitor['cpf'], "cpf")
+        chave_real = cripto.decifrar(eleitor['chave_acesso'], "chave")
+
+        # validação das credenciais
+        # compara os 4 primeiros dígitos do CPF e a chave de acesso
+        if cpf_real[:4] != primeiros_cpf or chave_real != chave_acesso_input:
+            return {"sucesso": False, "mensagem": "Dados de identificação inválidos."}
+
+
+        # Se passou por tudo, identificação bem-sucedida
+        return {
+            "sucesso": True, 
+            "mensagem": "Mesário autenticado com sucesso.",
+            "is_mesario": eleitor['is_mesario'],
+            "id_eleitor": eleitor['id_eleitor']
+        }
+
+    except Exception as e:
+        return {"sucesso": False, "mensagem": f"Erro na autenticação: {e}"}
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao and conexao.is_connected():
+            conexao.close()
+
 def abrir_votacao(titulo, primeiros_cpf, chave):
-    resultado = autenticar_eleitor(titulo, primeiros_cpf, chave)
+    bd.zerezima_bd()
+    resultado = autenticar_mesario(titulo, primeiros_cpf, chave)
 
     if not resultado['sucesso']:
         msg.erro(resultado['mensagem'])
         return False
     if not resultado['is_mesario']:
-        msg.erro("Apenas mesários podem abrir a votação.")
+        msg.alerta("Apenas mesários podem abrir a votação.")
         return False
     
+
     if not bd.zerezima_bd():
         return False
     
     arquivo_log = logs.zerezima()
-
-    votos = bd.listar_votos()
-
-    if votos is False:
-        return False
     
     return arquivo_log
 
@@ -181,10 +240,10 @@ def encerrar_votacao(titulo, primeiros_cpf, chave):
     # AUTENTICAÇÃO
     # ==========================
     
-    resultado = autenticar_eleitor(titulo, primeiros_cpf, chave)
+    resultado = autenticar_mesario(titulo, primeiros_cpf, chave)
     
-    if not resultado["sucesso"] or not resultado.get("is_mesario"):
-        print("Falha na autenticação ou usuário não é mesário.")
+    if not resultado["sucesso"] or not resultado['is_mesario']:
+        msg.erro("Falha na autenticação ou usuário não é mesário.")
         return False
 
     confirma = input("Deseja realmente encerrar a votação? (Sim/Não): ").strip().lower()
@@ -194,8 +253,29 @@ def encerrar_votacao(titulo, primeiros_cpf, chave):
     # Dupla confirmação da chave 
     chave_conf = input("Confirme sua chave para fechar a urna: ").strip()
     if chave_conf != chave:
-        print("Chave incorreta para encerramento.")
+        msg.erro("Chave incorreta para encerramento.")
         return False
 
-    print("\nVotação encerrada com sucesso.") 
+    msg.sucesso("\nVotação encerrada com sucesso.") 
     return True
+
+
+def mostrar_protocolo(protocolo):
+    """
+    Exibe o protocolo formado em uma caixa no terminal.
+
+    Args:
+        protocolo (str): protocolo a ser exibido.
+
+    Returns:
+        str: o próprio protocolo.       
+    """
+    print(f"""
+
+    {cor.azul("   Seu protocolo é:")}
+{cor.ciano(f"""╔════════════════════════════╗
+║        {protocolo}        ║
+╚════════════════════════════╝""")}
+ {cor.preto(">> Guarde-a com segurança <<")}
+""")
+
