@@ -48,19 +48,13 @@ def agora():
 
 #     return nome_arquivo
 
-def zerezima():
+def criar_arq():
     """
-    Cria um novo arquivo de log com nome disponível (logs{i}.txt), evitando sobrescrever arquivos existentes.
-    
-    Registra no arquivo de log o evento de abertura de votação após a zerézima.
-
-    Args:
-        Nenhum.
+    Cria um novo arquivo de log em branco com nome disponível (logs{i}.txt).
 
     Returns:
         str: Nome do arquivo criado.
     """
-
     contador = 1
     nome_arquivo = f"logs{contador}.txt"
 
@@ -69,15 +63,24 @@ def zerezima():
         nome_arquivo = f"logs{contador}.txt"
 
     with open(nome_arquivo, "w", encoding="utf-8") as arq:
-        arq.write("""
-╔════════════════════════════════════════════════════╗
-║        LAD.PY | LOG DE OCORRÊNCIAS CRÍTICAS        ║
-╚════════════════════════════════════════════════════╝
-""")
-        arq.write("\n------------------------------------------------------------------------------------------")
-        arq.write(f"\n{agora()}\nABERTURA: Votação iniciada com sucesso. Total de votos zerado.")
+        arq.write("")
 
     return nome_arquivo
+
+
+def zerezima(nome_arquivo):
+    """
+    Registra no arquivo de log o evento de abertura de votação após a zerézima.
+
+    Args:
+        nome_arquivo (str): Caminho do arquivo de log.
+
+    Returns:
+        None.
+    """
+    with open(nome_arquivo, "a", encoding="utf-8") as arq:
+        arq.write("\n------------------------------------------------------------------------------------------")
+        arq.write(f"\n{agora()}\nABERTURA: Votação iniciada com sucesso. Total de votos zerado.")
 
 def acesso_negado(nome_arquivo):
     """
@@ -107,21 +110,7 @@ def voto_duplo(nome_arquivo):
         arq.write("\n------------------------------------------------------------------------------------------")
         arq.write(f"\n{agora()}\nALERTA: Tentativa de voto duplo.")
         
-def log_protocolos(protocolo):
-    """
-    Registra no arquivo de log protocolos o protocolo gerado na votação sem cifra.
-
-    Args:
-        protocolo (str): protocolo gerado na função.
-
-    Returns:
-        None.
-    """
-    with open("protocolos.txt", "a", encoding="utf-8") as arq:
-        arq.write("\n------------------------------------------------------------------------------------------")
-        arq.write(f"\n{agora()}\nProtocolo: {protocolo}")
-
-def log_voto_sucesso(nome_arquivo):
+def voto_sucesso(nome_arquivo):
     """
     Registra no arquivo de log o evento de voto realizado com sucesso.
 

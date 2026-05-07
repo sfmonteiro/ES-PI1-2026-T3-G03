@@ -2,6 +2,8 @@ import random
 import string
 import time
 
+from mysql.connector import Error
+
 from funcoes import cor
 from . import bd
 from . import cripto
@@ -47,7 +49,6 @@ def registrar_voto(id_eleitor, numero_candidato):
     Chama a função listar_candidatos pelo número para encontrar o candidato que o eleitor escolheu.
     Chama a função insert_voto para salvar no banco de dados as informações.
     Chama a função editar_status_voto para atualizar o atributo status_voto no bd.
-    Chama a função log_protocolos para gerar o arquivo txt e registrar os protocolos.
 
     Args:
         id_eleitor (int): id do eleitor identificado no login
@@ -79,8 +80,6 @@ def registrar_voto(id_eleitor, numero_candidato):
 
     bd.insert_voto(id_candidato_db, protocolo_cifra)
     bd.editar_status_voto(id_eleitor)
-
-    logs.log_protocolos(protocolo)
 
     return protocolo
 
@@ -184,6 +183,7 @@ def autenticar_mesario(titulo, primeiros_cpf, chave_acesso_input):
         # compara os 4 primeiros dígitos do CPF e a chave de acesso
         if cpf_real[:4] != primeiros_cpf or chave_real != chave_acesso_input:
             return {"sucesso": False, "mensagem": "Dados de identificação inválidos."}
+        
 
 
         # Se passou por tudo, identificação bem-sucedida
@@ -202,22 +202,26 @@ def autenticar_mesario(titulo, primeiros_cpf, chave_acesso_input):
         if conexao and conexao.is_connected():
             conexao.close()
 
-def abrir_votacao(titulo, primeiros_cpf, chave):
+def abrir_votacao(titulo, primeiros_cpf, chave, arquivo_log):
     bd.zerezima_bd()
     resultado = autenticar_mesario(titulo, primeiros_cpf, chave)
 
     if not resultado['sucesso']:
+        logs.acesso_negado(arquivo_log)
         msg.erro(resultado['mensagem'])
+        time.sleep(1.5)
         return False
     if not resultado['is_mesario']:
         msg.alerta("Apenas mesários podem abrir a votação.")
+        time.sleep(1.5)
+        logs.acesso_negado(arquivo_log)
         return False
     
 
     if not bd.zerezima_bd():
         return False
     
-    arquivo_log = logs.zerezima()
+    logs.zerezima(arquivo_log)
     
     return arquivo_log
 
@@ -256,7 +260,6 @@ def encerrar_votacao(titulo, primeiros_cpf, chave):
         msg.erro("Chave incorreta para encerramento.")
         return False
 
-    msg.sucesso("\nVotação encerrada com sucesso.") 
     return True
 
 
@@ -279,3 +282,56 @@ def mostrar_protocolo(protocolo):
  {cor.preto(">> Guarde-a com segurança <<")}
 """)
 
+def exibir_protocolos():
+    """
+    Busca os protocolos cifrados do banco de dados, decifra e exibe em ordem alfabética.
+
+    Returns:
+        bool: True se a listagem for exibida com sucesso, False em caso de erro.
+    """
+    conexao = bd.conectar()
+    if not conexao:
+        return False
+
+    cursor = None
+
+    try:
+        cursor = conexao.cursor()
+
+        query = """
+        SELECT protocolo
+        FROM votos
+        """
+        cursor.execute(query)
+        registros = cursor.fetchall()
+
+        if not registros:
+            msg.alerta("Nenhum protocolo cadastrado.")
+            return None
+
+        protocolos = []
+        for (protocolo_cifrado,) in registros:
+            protocolo_decifrado = decifrar(protocolo_cifrado, "protocolo")
+            if protocolo_decifrado:
+                protocolos.append(protocolo_decifrado)
+
+        if not protocolos:
+            msg.alerta("Erro ao buscar protocolos.")
+            return None
+
+        protocolos.sort()
+
+        for indice, protocolo in enumerate(protocolos, start=1):
+            print(f"{indice:03d}. {protocolo}")
+
+        return True
+
+    except Error as erro:
+        msg.erro(f"Erro ao exibir protocolos: {erro}")
+        return False
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao and conexao.is_connected():
+            conexao.close()

@@ -53,8 +53,7 @@ while (op_mod != 0):
 
                         dict_cadastro = mod_ger.menu_cad_eleitor()
                         if dict_cadastro is None:
-                            msg.alerta("Voltando para o menu anterior...")
-                            time.sleep(1.5)
+                            menu.loading("Retornando ao menu anterior...",1.5)
                             continue
 
                         chave_gerada = mod_ger.gerar_chave_acesso(dict_cadastro['nome'])
@@ -195,8 +194,7 @@ while (op_mod != 0):
                                                 op = 0 #retornar ao menu ELEITORES CADASTRADOS
 
                                             case 0:
-                                                msg.alerta("Voltando ao menu...")
-                                                time.sleep(1.5)
+                                                menu.loading("Retornando ao menu...",1.5)
 
                                             case _:
                                                 msg.erro("Opção inválida.")
@@ -210,27 +208,26 @@ while (op_mod != 0):
                                     input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
 
                                 case 0:
-                                    msg.alerta("Voltando ao módulo de Gerenciamento...")
-                                    time.sleep(1.5)
+                                    menu.loading("Retornando ao módulo de Gerenciamento...",1.5)
 
                                 case _:
                                     msg.erro("Opção inválida.")
                                     time.sleep(1.5)
 
                     case 0:
-                        msg.alerta("Voltando à seleção dos módulos...")
-                        time.sleep(1.5)
+                        menu.loading("Retornando à seleção dos módulos...",1.5)
                     case _:
                         msg.erro("Opção inválida.")
                         time.sleep(1.5)
 
         #=================== MODULO VOTAÇÃO ====================
         case 2:
-            menu.limpar_terminal()
             
             op_vot = -1
+            arquivo_log = logs.criar_arq()
 
             while (op_vot != 0):
+                menu.limpar_terminal()
                 menu.mostrar_vot()
                 op_vot = menu.selecionar_opcao()
 
@@ -241,27 +238,30 @@ while (op_mod != 0):
                         menu.limpar_terminal()
                         menu.mostrar_vot_abertura()
                         
-                        print(cor.ciano("Para abrir a votação, entre com as credenciais de um MESÁRIO autorizado:\n"))
-                        time.sleep(1)
-                        print(cor.ciano("Passo 1 de 3..."))
-                        titulo = input("Título do mesário: ").strip()
-                        print(cor.ciano("Passo 2 de 3..."))
-                        primeiros_cpf = input("4 primeiros dígitos do CPF: ").strip()
-                        print(cor.ciano("Passo 3 de 3..."))
-                        chave = input("Chave de acesso: ").strip()
+                        resultado_abertura = False
+                        while not resultado_abertura:
+                            print(cor.ciano("Para abrir a votação, entre com as credenciais de um MESÁRIO autorizado:\n"))
+                            time.sleep(1)
+                            print(cor.ciano("Passo 1 de 3..."))
+                            titulo = input("Título do mesário: ").strip()
+                            print(cor.ciano("Passo 2 de 3..."))
+                            primeiros_cpf = input("4 primeiros dígitos do CPF: ").strip()
+                            print(cor.ciano("Passo 3 de 3..."))
+                            chave = input("Chave de acesso: ").strip()
 
-                        arquivo_log = mod_vot.abrir_votacao(titulo, primeiros_cpf, chave)
+                            resultado_abertura = mod_vot.abrir_votacao(titulo, primeiros_cpf, chave, arquivo_log)
 
-                        if not arquivo_log:
-                            msg.erro("Não foi possível abrir a votação.")
-                            input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
-                            menu.limpar_terminal()
-                            continue
+                            if not resultado_abertura:
+                                msg.erro("Não foi possível abrir a votação.")
+                                input(cor.amarelo("\n>> Pressione ENTER para tentar novamente...  "))
+                                menu.limpar_terminal()
+                                menu.mostrar_vot_abertura()
+                            
                         
                         menu.limpar_terminal()
                         menu.mostrar_vot_abertura()
                         msg.sucesso("Sistema de votação aberto com sucesso!")
-                        input(cor.amarelo("\n>> Pressione ENTER para acessar o menu da urna..."))
+                        menu.loading("Abrindo a urna...",1.5)
 
                         op_votacao = 0
 
@@ -289,6 +289,7 @@ while (op_mod != 0):
                                      
                                     if not resultado["sucesso"]:
                                         msg.erro(resultado["mensagem"])
+                                        logs.acesso_negado(arquivo_log)
                                         input(cor.amarelo("\n>> Pressione ENTER para tentar novamente...  "))
                                         continue
 
@@ -302,17 +303,12 @@ while (op_mod != 0):
                                             msg.sucesso(resultado["mensagem"])
                                             id_eleitor = resultado["id_eleitor"]
 
-                                            print(cor.amarelo("\n>> Carregando lista de candidatos..."))
-                                            time.sleep(2)
-
                                             menu.limpar_terminal()
                                             menu.mostrar_vot_votacao()
 
-                                            menu.mostrar_vot_candidatos()
+
                                             candidatos = bd.listar_candidatos()
-                                            for candidato in candidatos:
-                                                print(f"{cor.ciano(f'[{candidato['numero_candidato']}]')} {candidato['nome_candidato']} | {candidato['partido_candidato']}")
-                                                
+                                            
                                             if not candidatos:
                                                 input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
                                                 menu.limpar_terminal()
@@ -324,12 +320,16 @@ while (op_mod != 0):
                 
                                             if protocolo == "REPETIR":
                                                 msg.erro("Você já votou! Não é permitido votar mais de uma vez.")
+                                                logs.voto_duplo(arquivo_log)
+                                                input(cor.amarelo("\n>> Pressione ENTER para retornar...  "))
                                                 votacao_concluida = False
-                                            elif protocolo:
 
+                                            elif protocolo:
                                                 menu.limpar_terminal()
                                                 menu.mostrar_vot_votacao()
-                                                msg.sucesso(f"Votação finalizada!")
+                                                menu.loading("Registrando seu voto...",1.5)
+                                                msg.sucesso(f"Voto registrado com sucesso!")
+                                                logs.voto_sucesso(arquivo_log)
                                                 mod_vot.mostrar_protocolo(protocolo)
                                                 input(cor.amarelo("\n>> Pressione ENTER para finalizar...  "))
 
@@ -358,38 +358,49 @@ while (op_mod != 0):
                                     resultado = mod_vot.encerrar_votacao(titulo, primeiros_cpf, chave)
 
                                     if resultado:
+                                        msg.sucesso("Sistema de votação encerrado com sucesso.")
                                         logs.encerramento(arquivo_log)
-                                        msg.sucesso("Sistema de votação encerrado.")
-                                        time.sleep(1.5)
 
+                                        menu.limpar_terminal()
+                                        menu.mostrar_vot_encerrar()
+                                        menu.loading("Liberando módulos de Auditoria e Resultados...",1.5)
+                                        input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
                                         break
                                     else:
                                         msg.erro("Falha ao encerrar votação.")
+                                        logs.acesso_negado(arquivo_log)
 
                                     input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
 
                                 case _:
                                     msg.erro("Opção inválida.")
+                                    time.sleep(1.5)
 
                     #=================== AUDITORIA ====================
                     case 2:
-                        menu.limpar_terminal()
+                        
                         op_auditoria = -1
-
                         while (op_auditoria != 0):
-                            print(cor.azul("\n█▓▒▒░░░ AUDITORIA DO SISTEMA DE VOTAÇÃO ░░░▒▒▓█"))
-                            print(menu.vot_menu_auditoria)
+                            menu.limpar_terminal()
+                            menu.mostrar_vot_auditoria()
                             op_auditoria = menu.selecionar_opcao()
 
                             match op_auditoria:
                                 case 1:
-                                    logs.exibir_logs()
+                                    menu.limpar_terminal()
+                                    menu.mostrar_vot_logs()
+                                    logs.exibir_logs(arquivo_log)
+                                    input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
                                 case 2:
-                                    msg.alerta("[Exibir Protocolos da Votação]")
+                                    menu.limpar_terminal()
+                                    menu.mostrar_vot_protocolo()
+                                    mod_vot.exibir_protocolos()
+                                    input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
                                 case 0:
-                                    msg.alerta("Voltando para o menu anterior...")
+                                    menu.loading("Retornando ao menu anterior...",1.5)
                                 case _:
                                     msg.erro("Opção inválida.")
+                                    time.sleep(1.5)
 
                     #=================== RESULTADO ====================
                     case 3:
@@ -397,8 +408,7 @@ while (op_mod != 0):
                         op_resultado = -1
 
                         while (op_resultado != 0):
-                            print(cor.azul("\n█▓▒▒░░░ RESULTADO DA VOTAÇÃO ░░░▒▒▓█"))
-                            print(menu.vot_menu_resultado)
+                            menu.mostrar_vot_resultado()
                             op_resultado = menu.selecionar_opcao()
 
                             match op_resultado:
@@ -414,15 +424,16 @@ while (op_mod != 0):
                                     msg.alerta("Voltando para o menu anterior...")
                                 case _:
                                     msg.erro("Opção inválida.")
+                                    time.sleep(1.5)
                         
                     case 0:
-                        msg.alerta("Voltando à seleção dos módulos...")
+                        menu.loading("Retornando à seleção dos módulos...",1.5)
                     case _:
                         msg.erro("Opção inválida.")
+                        time.sleep(1.5)
         
         case 0:
-            msg.alerta("Encerrando o programa LAD.PY...")
-            time.sleep(1.5)
+            menu.loading("Encerrando o programa LAD.PY...",1.5)
             menu.limpar_terminal()
 
         case _:

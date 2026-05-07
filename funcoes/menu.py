@@ -2,6 +2,7 @@
 #                                                 BIBLIOTECAS
 #===================================================================================================================
 
+import sys
 from funcoes import msg
 from funcoes import cor
 import os
@@ -46,6 +47,7 @@ def selecionar_opcao():
         valor = input("Selecione sua opção:  ").strip()
         valor_int = validar_numero(valor)
         return valor_int
+    
 def limpar_terminal():
     """
     Limpa o terminal durante a execução para melhorar a experiência do usuário.
@@ -58,7 +60,37 @@ def limpar_terminal():
     """
     os.system('cls' if os.name == 'nt' else 'clear')
 
+def loading(msg, duracao):
+    """
+    Exibe uma animação de loading no terminal com spinner estilo "canto de círculo".
 
+    Args:
+        msg (str): Mensagem exibida ao lado do spinner.
+        duracao (float): Tempo total de execução da animação em segundos.
+
+    A animação usa caracteres Unicode para simular um movimento circular.
+    A linha é atualizada no terminal sem quebrar linha.
+    """
+    frames = [
+        "◜",
+        "◝",
+        "◞",
+        "◟"
+    ]
+
+    fim = time.time() + duracao
+
+    while time.time() < fim:
+        for frame in frames:
+            sys.stdout.write(
+                f"\r{cor.amarelo(frame)}  {cor.amarelo(msg)}"
+            )
+            sys.stdout.flush()
+            time.sleep(0.07)
+
+    # limpa a linha no final
+    sys.stdout.write("\r" + " " * (len(msg) + 5) + "\r")
+    sys.stdout.flush()
 
 
 #===================================================================================================================
@@ -83,8 +115,7 @@ def mostrar_inicio ():
 ██║     ██╔══██║██║  ██║   ██╔═══╝   ╚██╔╝  
 ███████╗██║  ██║██████╔╝██╗██║        ██║   
 ╚══════╝╚═╝  ╚═╝╚═════╝ ╚═╝╚═╝        ╚═╝ """)}
-{cor.azul("""
-╔══════════════════════════════════════════╗
+{cor.azul("""╔══════════════════════════════════════════╗
 ║        SISTEMA DE VOTAÇÃO DIGITAL        ║
 ╚══════════════════════════════════════════╝""")}
 {cor.preto(" © 2026 | Todos os direitos reservados.")}
@@ -101,8 +132,7 @@ def mostrar_modulos():
         None.
     """
     print(f"""
-{cor.verde("""
-╔══════════════════════════════════════════╗
+{cor.verde("""╔══════════════════════════════════════════╗
 ║            MÓDULOS DO SISTEMA            ║
 ╚══════════════════════════════════════════╝
 """)}
@@ -126,8 +156,7 @@ def mostrar_ger():
         None.
     """
     print(f"""
-{cor.ciano("""
-╔══════════════════════════════════════════╗
+{cor.ciano("""╔══════════════════════════════════════════╗
 ║              GERENCIAMENTO               ║
 ╚══════════════════════════════════════════╝
 """)}
@@ -147,8 +176,7 @@ def mostrar_ger_cad_eleitores():
         None.
     """
     print(f"""
-{cor.ciano("""
-╔══════════════════════════════════════════╗
+{cor.ciano("""╔══════════════════════════════════════════╗
 ║           CADASTRO DO ELEITOR            ║
 ╚══════════════════════════════════════════╝
 """)}""")
@@ -163,8 +191,7 @@ def mostrar_ger_eleitores():
         None.
     """
     print(f"""
-{cor.ciano("""
-╔══════════════════════════════════════════╗
+{cor.ciano("""╔══════════════════════════════════════════╗
 ║                ELEITORES                 ║
 ╚══════════════════════════════════════════╝
 """)}
@@ -183,8 +210,7 @@ def mostrar_ger_eleitores_edit():
         None.
     """
     print(f"""
-{cor.ciano("""
-╔══════════════════════════════════════════╗
+{cor.ciano("""╔══════════════════════════════════════════╗
 ║                 ELEITOR                  ║
 ╚══════════════════════════════════════════╝
 """)}
@@ -204,8 +230,7 @@ def mostrar_ger_eleitores_cadastrados():
         None.
     """
     print(f"""
-{cor.ciano("""
-╔══════════════════════════════════════════╗
+{cor.ciano("""╔══════════════════════════════════════════╗
 ║           ELEITORES CADASTRADOS          ║
 ╚══════════════════════════════════════════╝
 """)}""")
@@ -218,8 +243,7 @@ def mostrar_ger_eleitores_cadastrados():
 def mostrar_vot():
     
     print(f"""
-{cor.verde("""
-╔══════════════════════════════════════════╗
+{cor.verde("""╔══════════════════════════════════════════╗
 ║                 VOTAÇÃO                  ║
 ╚══════════════════════════════════════════╝
 """)}
@@ -232,8 +256,7 @@ def mostrar_vot():
 def mostrar_vot_abertura():
     
     print(f"""
-{cor.verde("""
-╔══════════════════════════════════════════╗
+{cor.verde("""╔══════════════════════════════════════════╗
 ║           ABERTURA DA VOTAÇÃO            ║
 ╚══════════════════════════════════════════╝
 """)}""")
@@ -241,8 +264,7 @@ def mostrar_vot_abertura():
 def mostrar_vot_menu_votacao():
 
     print(f"""
-{cor.verde("""
-╔══════════════════════════════════════════╗
+{cor.verde("""╔══════════════════════════════════════════╗
 ║                 VOTAÇÃO                  ║
 ╚══════════════════════════════════════════╝
 """)}
@@ -253,8 +275,7 @@ def mostrar_vot_menu_votacao():
 def mostrar_vot_votacao():
 
     print(f"""
-{cor.verde("""
-╔══════════════════════════════════════════╗
+{cor.verde("""╔══════════════════════════════════════════╗
 ║                 VOTAÇÃO                  ║
 ╚══════════════════════════════════════════╝
 """)}""")
@@ -262,33 +283,41 @@ def mostrar_vot_votacao():
 def mostrar_vot_encerrar():
 
     print(f"""
-{cor.verde("""
-╔══════════════════════════════════════════╗
+{cor.verde("""╔══════════════════════════════════════════╗
 ║         ENCERRAMENTO DA VOTAÇÃO          ║
 ╚══════════════════════════════════════════╝
 """)}""")
     
-def mostrar_vot_candidatos():
+def mostrar_vot_logs():
 
-    print(f"""{cor.magenta("""╔════════════════════════════════╗
-║           CANDIDATOS           ║
-╚════════════════════════════════╝
-""")}""")
+    print(f"""
+{cor.ciano("""╔══════════════════════════════════════════╗
+║       LOGS DE OCORRÊNCIAS CRÍTICAS       ║
+╚══════════════════════════════════════════╝""")}""")
 
-vot_menu_auditoria = f"""
-{cor.ciano("""
-╔══════════════════════════════════════════╗
+def mostrar_vot_protocolo():
+
+    print(f"""
+{cor.ciano("""╔══════════════════════════════════════════╗
+║          PROTOCOLOS DA VOTAÇÃO           ║
+╚══════════════════════════════════════════╝""")}""")
+
+def mostrar_vot_auditoria():
+
+    print(f"""
+{cor.ciano("""╔══════════════════════════════════════════╗
 ║                AUDITORIA                 ║
 ╚══════════════════════════════════════════╝
 """)}
 [1]  EXIBIR LOGS DE OCORRÊNCIAS
 [2]  EXIBIR PROTOCOLOS DA VOTAÇÃO
 {cor.vermelho("[0]  VOLTAR")}
-"""
+""")
 
-vot_menu_resultado = f"""
-{cor.ciano("""
-╔══════════════════════════════════════════╗
+def mostrar_vot_resultado():
+
+    print(f"""
+{cor.ciano("""╔══════════════════════════════════════════╗
 ║           RESULTADO DA VOTAÇÃO           ║
 ╚══════════════════════════════════════════╝
 """)}
@@ -297,4 +326,4 @@ vot_menu_resultado = f"""
 [3]  VOTOS POR PARTIDO
 [4]  VALIDAÇÃO DA INTEGRIDADE DOS VOTOS
 {cor.vermelho("[0]  VOLTAR")}
-"""
+""")
