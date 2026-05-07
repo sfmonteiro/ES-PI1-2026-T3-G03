@@ -4,7 +4,9 @@ from . import bd
 from . import cripto
 from . import logs
 from . import msg 
-from .cripto import decifrar 
+from .cripto import decifrar
+from . import cor
+from mysql.connector import Error
 
 def gerar_protocolo(numero_candidato):
     """
@@ -188,3 +190,61 @@ def encerrar_votacao(titulo, primeiros_cpf, chave):
 
     print("\nVotação encerrada com sucesso.") 
     return True
+
+    # ==========================
+    # EXIBIR PROTOCOLOS
+    # ==========================
+def exibir_protocolos():
+    """
+    Busca os protocolos cifrados do banco de dados, decifra e exibe em ordem alfabética.
+
+    Returns:
+        bool: True se a listagem for exibida com sucesso, False em caso de erro.
+    """
+    conexao = bd.conectar()
+    if not conexao:
+        return False
+
+    cursor = None
+
+    try:
+        cursor = conexao.cursor()
+
+        query = """
+        SELECT protocolo
+        FROM votos
+        """
+        cursor.execute(query)
+        registros = cursor.fetchall()
+
+        if not registros:
+            msg.alerta("Nenhum protocolo cadastrado.")
+            return None
+
+        protocolos = []
+        for (protocolo_cifrado,) in registros:
+            protocolo_decifrado = decifrar(protocolo_cifrado, "protocolo")
+            if protocolo_decifrado:
+                protocolos.append(protocolo_decifrado)
+
+        if not protocolos:
+            msg.alerta("Erro ao buscar protocolos.")
+            return None
+
+        protocolos.sort()
+
+        print(cor.magenta("\n█▓▒▒░░░    PROTOCOLOS DA VOTAÇÃO    ░░░▒▒▓█\n"))
+        for indice, protocolo in enumerate(protocolos, start=1):
+            print(f"{indice:03d}. {protocolo}")
+
+        return True
+
+    except Error as erro:
+        msg.erro(f"Erro ao exibir protocolos: {erro}")
+        return False
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao and conexao.is_connected():
+            conexao.close()

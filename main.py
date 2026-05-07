@@ -303,7 +303,9 @@ while (op_mod != 0):
                                 case 1:
                                     logs.exibir_logs()
                                 case 2:
-                                    msg.alerta("[Exibir Protocolos da Votação]")
+                                    menu.limpar_terminal()
+                                    mod_vot.exibir_protocolos()
+                                    input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
                                 case 0:
                                     msg.alerta("Voltando para o menu anterior...")
                                 case _:
