@@ -413,7 +413,11 @@ while (op_mod != 0):
 
                             match op_resultado:
                                 case 1:
-                                    msg.alerta("[Boletim de Urna]")
+                                    menu.limpar_terminal()
+                                    menu.mostrar_vot_resultado()
+                                    mod_vot.boletim_urna()
+                                    mod_vot.declarar_vencedor()
+                                    input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
                                 case 2:
                                     msg.alerta("[Estatística de Comparecimento]")
                                 case 3:

@@ -29,12 +29,12 @@ def conectar():
     """
     try:
         conexao = mysql.connector.connect(
-            host=os.getenv("DB_HOST"),
-            port=int(os.getenv("DB_PORT")),
-            user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD"),
-            database=os.getenv("DB_NAME")
-        )
+        host="localhost",
+        port=3306,
+        user="root",
+        password="@Placido2509sql",
+        database="lad_py"
+    )
 
         return conexao
 
@@ -678,6 +678,52 @@ def listar_votos():
         msg.erro(f"Erro no banco {erro}")
         return False
     
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao and conexao.is_connected():
+            conexao.close()
+
+# =====================================================================
+#                     6. APOIO AO MÓDULO DE RESULTADOS
+# =====================================================================
+
+def listar_resultados():
+    """
+    Lista os candidatos com a quantidade total de votos recebidos.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        list: Lista de dicionários com os dados dos candidatos e o total de votos.
+        bool: False caso ocorra erro de conexão ou erro na consulta.
+    """
+    conexao = conectar()
+
+    if not conexao:
+        return False
+    
+    cursor = None
+    try:
+        cursor = conexao.cursor(dictionary=True)
+        query = """
+        SELECT c.id_candidato, c.nome_candidato, c.numero_candidato, c.partido_candidato, COUNT(v.id_candidato) AS total_votos
+        FROM candidatos c
+        LEFT JOIN votos v ON c.id_candidato = v.id_candidato
+        GROUP BY c.id_candidato, c.nome_candidato, c.numero_candidato, c.partido_candidato
+        ORDER BY c.nome_candidato ASC
+        """
+        
+        cursor.execute(query)
+        resultados = cursor.fetchall()
+
+        return resultados
+    
+    except Error as erro:
+        msg.erro(f"Erro no banco: {erro}")
+        return False
+
     finally:
         if cursor:
             cursor.close()

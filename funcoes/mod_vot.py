@@ -335,3 +335,90 @@ def exibir_protocolos():
             cursor.close()
         if conexao and conexao.is_connected():
             conexao.close()
+
+def boletim_urna():
+    """
+    Exibe o boletim de urna com os votos consolidados por candidato.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        bool: True se o boletim for exibido, False caso contrário.
+    """
+    resultados = bd.listar_resultados()
+
+    if not resultados:
+        msg.alerta("Nenhum resultado encontrado.")
+        return False
+
+    print(cor.magenta("\n█▓▒▒░░░    BOLETIM DE URNA    ░░░▒▒▓█\n"))
+
+    for candidato in resultados:
+        print(
+            f"[{candidato['numero_candidato']}] "
+            f"{candidato['nome_candidato']} | "
+            f"{candidato['partido_candidato']} | "
+            f"Votos: {candidato['total_votos']}"
+        )
+
+    return True
+
+
+def declarar_vencedor():
+    """
+    Declara o vencedor da votação ou informa empate entre candidatos.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        bool: True se o resultado for exibido, False caso contrário.
+    """
+    resultados = bd.listar_resultados()
+
+    if not resultados:
+        msg.alerta("Nenhum resultado encontrado.")
+        return False
+
+    maior_votos = 0
+
+    for candidato in resultados:
+        if candidato['total_votos'] > maior_votos:
+            maior_votos = candidato['total_votos']
+
+    if maior_votos == 0:
+        msg.alerta("Nenhum voto registrado. Não há vencedor.")
+        return False
+
+    empatados = []
+
+    for candidato in resultados:
+        if candidato['total_votos'] == maior_votos:
+            empatados.append(candidato)
+
+    if len(empatados) > 1:
+        print(cor.magenta("\n█▓▒▒░░░    EMPATE NA VOTAÇÃO    ░░░▒▒▓█\n"))
+
+        for candidato in empatados:
+            print(
+                f"[{candidato['numero_candidato']}] "
+                f"{candidato['nome_candidato']} | "
+                f"{candidato['partido_candidato']} | "
+                f"Votos: {candidato['total_votos']}"
+            )
+
+        return True
+
+    vencedor = empatados[0]
+
+    print(cor.magenta("\n█▓▒▒░░░    VENCEDOR DA VOTAÇÃO    ░░░▒▒▓█\n"))
+
+    print(
+        f"{vencedor['nome_candidato']} | "
+        f"Número: {vencedor['numero_candidato']} | "
+        f"Partido: {vencedor['partido_candidato']} | "
+        f"Votos: {vencedor['total_votos']}"
+    )
+
+    return True
