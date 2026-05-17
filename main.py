@@ -424,6 +424,16 @@ while (op_mod != 0):
                                     msg.alerta("[Votos por Partido]")
                                 case 4:
                                     msg.alerta("[Validação da Integridade dos Votos]")
+                                    resultado = bd.validar_integridade()
+                                    if resultado["integro"] == True:
+                                        msg.sucesso("Votação Íntegra!")
+                                        msg.sucesso("Total de votos: %d | Total Eleitores Ja Votou: %d" 
+                                                    % (resultado["total_votos"], resultado["total_eleitores"]))
+                                    else:
+                                        msg.erro("Votação Inconsistente!")
+                                        msg.erro("Total de votos: %d | Total Eleitores Ja Votou: %d" 
+                                                    % (resultado["total_votos"], resultado["total_eleitores"]))
+                                    
                                 case 0:
                                     msg.alerta("Voltando para o menu anterior...")
                                 case _:
