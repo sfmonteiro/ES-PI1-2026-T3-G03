@@ -422,3 +422,92 @@ def declarar_vencedor():
     )
 
     return True
+
+def calcular_votos_por_partido():
+    """
+    Calcula a quantidade total de votos recebidos por cada partido.
+
+    Realiza uma consulta SQL que cruza as tabelas de votos e candidatos,
+    agrupando os resultados e ordenando do partido mais votado para o menos votado.
+
+    Returns:
+        list: Uma lista de dicionários, onde cada dicionário contém as chaves 
+        'partido' e 'total_votos'. Retorna lista vazia se houver erro.
+    """
+
+    conexao = bd.conectar()
+    
+    try:
+        # dictionary=True facilita a leitura dos dados no Python depois
+        cursor = conexao.cursor(dictionary=True)
+        
+        query = """
+            SELECT c.partido, COUNT(v.id_voto) AS total_votos
+            FROM votos v
+            JOIN candidatos c ON v.id_candidato = c.id_candidato
+            GROUP BY c.partido
+            ORDER BY total_votos DESC
+        """
+        
+        cursor.execute(query)
+        resultados = cursor.fetchall()
+        
+        return resultados
+
+    except Exception as e:
+        msg.erro(f"Erro ao calcular votos por partido: {e}")
+        return []
+    finally:
+        if 'cursor' in locals() and cursor:
+            cursor.close()
+        if 'conexao' in locals() and conexao and conexao.is_connected():
+            conexao.close()
+
+def calcular_estatisticas_comparecimento():
+    """
+    Calcula as estatísticas de comparecimento dos eleitores na urna.
+
+    Consulta a tabela de eleitores para contabilizar o total de cadastrados
+    e quantos destes possuem o status_voto como verdadeiro.
+
+    Returns:
+        dict: Dicionário contendo 'total', 'presentes', 'ausentes' e 'percentual'.
+              Retorna None em caso de erro.
+    """
+
+    conexao = bd.conectar()
+    
+    try:
+        cursor = conexao.cursor(dictionary=True)
+        
+        query = """
+            SELECT 
+                COUNT(*) AS total_eleitores,
+                SUM(CASE WHEN status_voto = 1 THEN 1 ELSE 0 END) AS presentes
+            FROM eleitores
+        """
+        
+        cursor.execute(query)
+        resultado = cursor.fetchone()
+
+        # Tratamento caso o banco retorne nulo para total ou presentes
+        total = resultado['total_eleitores'] if resultado['total_eleitores'] else 0
+        presentes = int(resultado['presentes']) if resultado['presentes'] else 0
+        ausentes = total - presentes
+        
+        # Evita o erro de "divisão por zero" se não houver ninguém cadastrado
+        percentual = (presentes / total * 100) if total > 0 else 0.0
+
+        return {
+            "total": total,
+            "presentes": presentes,
+            "ausentes": ausentes,
+            "percentual": round(percentual, 2)
+        }
+
+    except Exception as e:
+        print(f"Erro ao calcular estatísticas de comparecimento: {e}")
+        return None
+    finally:
+        if 'cursor' in locals() and cursor:
+            cursor.close()
