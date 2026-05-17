@@ -7,6 +7,7 @@ from mysql.connector import Error, IntegrityError
 from funcoes import mod_ger, msg, cripto
 from dotenv import load_dotenv
 import os
+import mysql.connector
 from funcoes import cor
 from funcoes import menu
 
@@ -29,12 +30,12 @@ def conectar():
     """
     try:
         conexao = mysql.connector.connect(
-        host="localhost",
-        port=3306,
-        user="root",
-        password="123456",
-        database="LAD_Py"
-    )
+            host=os.getenv("DB_HOST"),
+            port=int(os.getenv("DB_PORT")),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            database=os.getenv("DB_NAME")
+        )
 
         return conexao
 
