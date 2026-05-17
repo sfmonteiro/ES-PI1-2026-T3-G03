@@ -319,9 +319,6 @@ while (op_mod != 0):
                                             protocolo = mod_vot.registrar_voto(id_eleitor, numero_candidato)
                 
                                             if protocolo == "REPETIR":
-                                                msg.erro("Você já votou! Não é permitido votar mais de uma vez.")
-                                                logs.voto_duplo(arquivo_log)
-                                                input(cor.amarelo("\n>> Pressione ENTER para retornar...  "))
                                                 votacao_concluida = False
 
                                             elif protocolo:
