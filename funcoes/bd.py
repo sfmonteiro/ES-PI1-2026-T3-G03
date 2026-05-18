@@ -7,6 +7,7 @@ from mysql.connector import Error, IntegrityError
 from funcoes import mod_ger, msg, cripto
 from dotenv import load_dotenv
 import os
+import mysql.connector
 from funcoes import cor
 from funcoes import menu
 
@@ -29,12 +30,12 @@ def conectar():
     """
     try:
         conexao = mysql.connector.connect(
-        host="localhost",
-        port=3306,
-        user="root",
-        password="@Placido2509sql",
-        database="lad_py"
-    )
+            host=os.getenv("DB_HOST"),
+            port=int(os.getenv("DB_PORT")),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            database=os.getenv("DB_NAME")
+        )
 
         return conexao
 
@@ -729,3 +730,50 @@ def listar_resultados():
             cursor.close()
         if conexao and conexao.is_connected():
             conexao.close()
+            
+def validar_integridade():
+    """
+    Conta a quantidade de votos recebidos e a quantidade de eleitores com status_voto TRUE.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        dict: com total_votos, total_eleitores e integro BOOL
+    """
+    conexao = conectar()
+
+    if not conexao:
+        return False
+    
+    cursor = None
+    try:
+        cursor = conexao.cursor()
+        query = """
+        SELECT COUNT(*) FROM votos
+        """
+        cursor.execute(query)
+        total_votos = cursor.fetchone()[0]
+        
+        query = """
+        SELECT COUNT(*) FROM eleitores 
+        WHERE status_voto is TRUE
+        """
+        cursor.execute(query)
+        total_jaVotou = cursor.fetchone()[0]
+
+        resultado = {"total_votos": total_votos, "total_eleitores": total_jaVotou, "integro": total_jaVotou == total_votos}
+
+        return resultado
+    
+    except Error as erro:
+        msg.erro(f"Erro no banco: {erro}")
+        return False
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao and conexao.is_connected():
+            conexao.close()
+            
+    

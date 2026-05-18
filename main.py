@@ -319,9 +319,6 @@ while (op_mod != 0):
                                             protocolo = mod_vot.registrar_voto(id_eleitor, numero_candidato)
                 
                                             if protocolo == "REPETIR":
-                                                msg.erro("Você já votou! Não é permitido votar mais de uma vez.")
-                                                logs.voto_duplo(arquivo_log)
-                                                input(cor.amarelo("\n>> Pressione ENTER para retornar...  "))
                                                 votacao_concluida = False
 
                                             elif protocolo:
@@ -439,6 +436,16 @@ while (op_mod != 0):
                                         print(f"Partido {linha['partido']}: {linha['total_votos']} voto(s)")
                                 case 4:
                                     msg.alerta("[Validação da Integridade dos Votos]")
+                                    resultado = bd.validar_integridade()
+                                    if resultado["integro"] == True:
+                                        msg.sucesso("Votação Íntegra!")
+                                        msg.sucesso("Total de votos: %d | Total Eleitores Ja Votou: %d" 
+                                                    % (resultado["total_votos"], resultado["total_eleitores"]))
+                                    else:
+                                        msg.erro("Votação Inconsistente!")
+                                        msg.erro("Total de votos: %d | Total Eleitores Ja Votou: %d" 
+                                                    % (resultado["total_votos"], resultado["total_eleitores"]))
+                                    
                                 case 0:
                                     msg.alerta("Voltando para o menu anterior...")
                                 case _:
