@@ -352,7 +352,7 @@ def boletim_urna():
         msg.alerta("Nenhum resultado encontrado.")
         return False
 
-    print(cor.magenta("\n█▓▒▒░░░    BOLETIM DE URNA    ░░░▒▒▓█\n"))
+    # print(cor.magenta("\n█▓▒▒░░░    BOLETIM DE URNA    ░░░▒▒▓█\n"))
 
     for candidato in resultados:
         print(

@@ -113,7 +113,7 @@ while (op_mod != 0):
 
                                     if confirmar != 1:
                                         msg.alerta("Operação cancelada.")
-                                        input(cor.amarelo("\n>> Pressione ENTER para retornar ao menu...  "))
+                                        menu.loading("Retornando ao menu anterior...",1.5)
                                         continue
 
                                     op = -1
@@ -405,20 +405,23 @@ while (op_mod != 0):
                         op_resultado = -1
 
                         while (op_resultado != 0):
-                            menu.mostrar_vot_resultado()
+                            menu.mostrar_vot_resultado_menu()
                             op_resultado = menu.selecionar_opcao()
 
                             match op_resultado:
                                 case 1:
                                     menu.limpar_terminal()
-                                    menu.mostrar_vot_resultado()
+                                    menu.mostrar_vot_boletim()
                                     mod_vot.boletim_urna()
                                     mod_vot.declarar_vencedor()
-                                    input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
+                                    input(cor.amarelo("\n>> Pressione ENTER para retornar...  "))
                                 case 2:
+                                    menu.limpar_terminal()
+                                    menu.mostrar_vot_estatisticas()
                                     estatisticas = mod_vot.calcular_estatisticas_comparecimento()
 
                                     if estatisticas:
+                                        
                                         print("\n" + "="*40)
                                         print("      ESTATÍSTICAS DE COMPARECIMENTO      ")
                                         print("="*40)
@@ -429,13 +432,16 @@ while (op_mod != 0):
                                         print(f"Taxa de Participação     : {estatisticas['percentual']}%")
                                         print("="*40 + "\n")
                                 case 3:
+                                    menu.limpar_terminal()
+                                    menu.mostrar_vot_partido()
                                     resultados = mod_vot.calcular_votos_por_partido()
 
-                                    print("\n=== RESULTADO POR PARTIDO ===")
                                     for linha in resultados:
                                         print(f"Partido {linha['partido']}: {linha['total_votos']} voto(s)")
                                 case 4:
-                                    msg.alerta("[Validação da Integridade dos Votos]")
+                                    menu.limpar_terminal()
+                                    menu.mostrar_vot_integridade()
+
                                     resultado = bd.validar_integridade()
                                     if resultado["integro"] == True:
                                         msg.sucesso("Votação Íntegra!")
@@ -447,7 +453,7 @@ while (op_mod != 0):
                                                     % (resultado["total_votos"], resultado["total_eleitores"]))
                                     
                                 case 0:
-                                    msg.alerta("Voltando para o menu anterior...")
+                                    menu.loading("Retornando ao menu anterior...",1.5)
                                 case _:
                                     msg.erro("Opção inválida.")
                                     time.sleep(1.5)
