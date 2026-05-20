@@ -84,7 +84,7 @@ def registrar_voto(id_eleitor, numero_candidato):
     return protocolo
 
     
-def autenticar_eleitor(titulo, primeiros_cpf, chave_acesso_input):
+def autenticar_eleitor(titulo, primeiros_cpf, chave_acesso_input, arquivo_log):
     """
     Valida as credenciais do eleitor e verifica se ele já realizou o voto.
 
@@ -126,6 +126,7 @@ def autenticar_eleitor(titulo, primeiros_cpf, chave_acesso_input):
         
         # verifica se já votou
         if eleitor['status_voto']:
+            logs.voto_duplo(arquivo_log)
             return {"sucesso": False, "mensagem": "ALERTA: Este eleitor já realizou o voto."}
 
         # Se passou por tudo, identificação bem-sucedida
@@ -352,7 +353,7 @@ def boletim_urna():
         msg.alerta("Nenhum resultado encontrado.")
         return False
 
-    print(cor.magenta("\n█▓▒▒░░░    BOLETIM DE URNA    ░░░▒▒▓█\n"))
+    # print(cor.magenta("\n█▓▒▒░░░    BOLETIM DE URNA    ░░░▒▒▓█\n"))
 
     for candidato in resultados:
         print(

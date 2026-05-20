@@ -314,7 +314,7 @@ def mostrar_vot_auditoria():
 {cor.vermelho("[0]  VOLTAR")}
 """)
 
-def mostrar_vot_resultado():
+def mostrar_vot_resultado_menu():
 
     print(f"""
 {cor.ciano("""╔══════════════════════════════════════════╗
@@ -326,4 +326,49 @@ def mostrar_vot_resultado():
 [3]  VOTOS POR PARTIDO
 [4]  VALIDAÇÃO DA INTEGRIDADE DOS VOTOS
 {cor.vermelho("[0]  VOLTAR")}
+""")
+    
+def mostrar_vot_boletim():
+
+    print(f"""
+{cor.ciano("""╔══════════════════════════════════════════╗
+║              BOLETIM DE URNA             ║
+╚══════════════════════════════════════════╝
+""")}
+""")
+    
+# def mostrar_vot_vencedor():
+
+#     print(f"""
+# {cor.magenta("""╔═══════════════════════════════╗
+# ║      VENCEDOR DA VOTAÇÃO      ║
+# ╚═══════════════════════════════╝
+# """)}
+# """)
+    
+def mostrar_vot_partido():
+
+    print(f"""
+{cor.ciano("""╔══════════════════════════════════════════╗
+║            VOTOS POR PARTIDO             ║
+╚══════════════════════════════════════════╝
+""")}
+""")
+    
+def mostrar_vot_estatisticas():
+
+    print(f"""
+{cor.ciano("""╔══════════════════════════════════════════╗
+║     ESTASTÍSTICAS DE COMPARECIMENTO      ║
+╚══════════════════════════════════════════╝
+""")}
+""")
+    
+def mostrar_vot_integridade():
+
+    print(f"""
+{cor.ciano("""╔══════════════════════════════════════════╗
+║    VALIDAÇÃO DA INTEGRIDADE DOS VOTOS    ║
+╚══════════════════════════════════════════╝
+""")}
 """)
