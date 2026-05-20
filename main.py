@@ -416,9 +416,24 @@ while (op_mod != 0):
                                     mod_vot.declarar_vencedor()
                                     input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
                                 case 2:
-                                    msg.alerta("[Estatística de Comparecimento]")
+                                    estatisticas = mod_vot.calcular_estatisticas_comparecimento()
+
+                                    if estatisticas:
+                                        print("\n" + "="*40)
+                                        print("      ESTATÍSTICAS DE COMPARECIMENTO      ")
+                                        print("="*40)
+                                        print(f"Total de Eleitores Aptos: {estatisticas['total']}")
+                                        print(f"Comparecimento (Votaram) : {estatisticas['presentes']}")
+                                        print(f"Abstenções (Faltaram)    : {estatisticas['ausentes']}")
+                                        print("-" * 40)
+                                        print(f"Taxa de Participação     : {estatisticas['percentual']}%")
+                                        print("="*40 + "\n")
                                 case 3:
-                                    msg.alerta("[Votos por Partido]")
+                                    resultados = mod_vot.calcular_votos_por_partido()
+
+                                    print("\n=== RESULTADO POR PARTIDO ===")
+                                    for linha in resultados:
+                                        print(f"Partido {linha['partido']}: {linha['total_votos']} voto(s)")
                                 case 4:
                                     msg.alerta("[Validação da Integridade dos Votos]")
                                     resultado = bd.validar_integridade()
