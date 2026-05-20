@@ -442,10 +442,10 @@ def calcular_votos_por_partido():
         cursor = conexao.cursor(dictionary=True)
         
         query = """
-            SELECT c.partido, COUNT(v.id_voto) AS total_votos
-            FROM votos v
-            JOIN candidatos c ON v.id_candidato = c.id_candidato
-            GROUP BY c.partido
+            SELECT partido_candidato, COUNT(id_voto) AS total_votos
+            FROM votos 
+            JOIN candidatos ON id_candidato = id_candidato
+            GROUP BY partido_candidato
             ORDER BY total_votos DESC
         """
         
