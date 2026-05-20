@@ -285,7 +285,7 @@ while (op_mod != 0):
                                     chave = input("Chave de acesso: ").strip()
                                     time.sleep(1)
     
-                                    resultado = mod_vot.autenticar_eleitor(titulo, primeiros_cpf, chave)
+                                    resultado = mod_vot.autenticar_eleitor(titulo, primeiros_cpf, chave, arquivo_log)
                                      
                                     if not resultado["sucesso"]:
                                         msg.erro(resultado["mensagem"])
