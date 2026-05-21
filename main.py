@@ -307,19 +307,10 @@ while (op_mod != 0):
                                             menu.limpar_terminal()
                                             menu.mostrar_vot_votacao()
 
-
-                                            candidatos = bd.listar_candidatos()
-                                            
-                                            if not candidatos:
-                                                input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
-                                                menu.limpar_terminal()
-                                                continue
-                        
                                             numero_candidato = int(input("\nDigite o número do seu candidato: ").strip())
                 
                                             protocolo = mod_vot.registrar_voto(id_eleitor, numero_candidato)
                 
-                                          
                                             if protocolo == "REPETIR":
                                                 votacao_concluida = False
 
@@ -338,10 +329,6 @@ while (op_mod != 0):
                                                 menu.loading("Retornando ao menu anterior...",2)
                                                 votacao_concluida = True
                 
-                                    else:
-                                        msg.erro(resultado["mensagem"])
-                                        time.sleep(1.5)
-
                                 case 2:
                                     menu.limpar_terminal()
                                     menu.mostrar_vot_encerrar()

@@ -64,7 +64,11 @@ def registrar_voto(id_eleitor, numero_candidato):
     if candidato:
         print(f"\nCandidato: {candidato['nome_candidato']} | Partido: {candidato['partido_candidato']}")
         id_candidato_db = candidato['id_candidato']
-    
+        confirma = input(f"\nConfirma o voto no número {numero_candidato}? (S/N): ").upper()
+        if confirma != 'S':
+            msg.alerta("Voto cancelado. Retornando à inserção de número...")
+            time.sleep(1.5)
+            return "REPETIR"
     else: 
         resp = input("Número não corresponde a nenhum candidato. Deseja votar NULO? (S/N): ").upper()
         id_candidato_db = None
@@ -72,13 +76,6 @@ def registrar_voto(id_eleitor, numero_candidato):
             msg.alerta("Voto cancelado. Retornando à inserção de número...")
             time.sleep(1.5)
             return "REPETIR"
-        
-    confirma = input(f"\nConfirma o voto no número {numero_candidato}? (S/N): ").upper()
-    if confirma != 'S':
-            msg.alerta("Voto cancelado. Retornando à inserção de número...")
-            time.sleep(1.5)
-            return "REPETIR"
-           
     
 
     protocolo = gerar_protocolo(numero_candidato)
