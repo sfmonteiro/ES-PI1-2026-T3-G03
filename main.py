@@ -224,8 +224,7 @@ while (op_mod != 0):
         case 2:
             
             op_vot = -1
-            arquivo_log = logs.criar_arq()
-
+            
             while (op_vot != 0):
                 menu.limpar_terminal()
                 menu.mostrar_vot()
@@ -235,6 +234,8 @@ while (op_mod != 0):
                     
                     #=================== ABRIR VOTAÇÃO ====================
                     case 1:
+                        arquivo_log = logs.criar_arq()
+
                         menu.limpar_terminal()
                         menu.mostrar_vot_abertura()
                         
@@ -318,6 +319,7 @@ while (op_mod != 0):
                 
                                             protocolo = mod_vot.registrar_voto(id_eleitor, numero_candidato)
                 
+                                          
                                             if protocolo == "REPETIR":
                                                 votacao_concluida = False
 
@@ -333,10 +335,12 @@ while (op_mod != 0):
                                                 votacao_concluida = True 
                                             else:
                                                 msg.erro("Erro crítico ao registrar o voto.")
+                                                menu.loading("Retornando ao menu anterior...",2)
                                                 votacao_concluida = True
                 
                                     else:
                                         msg.erro(resultado["mensagem"])
+                                        time.sleep(1.5)
 
                                 case 2:
                                     menu.limpar_terminal()
@@ -401,10 +405,11 @@ while (op_mod != 0):
 
                     #=================== RESULTADO ====================
                     case 3:
-                        menu.limpar_terminal()
+                        
                         op_resultado = -1
 
                         while (op_resultado != 0):
+                            menu.limpar_terminal()
                             menu.mostrar_vot_resultado_menu()
                             op_resultado = menu.selecionar_opcao()
 
@@ -431,13 +436,17 @@ while (op_mod != 0):
                                         print("-" * 40)
                                         print(f"Taxa de Participação     : {estatisticas['percentual']}%")
                                         print("="*40 + "\n")
+
+                                        input(cor.amarelo("\n>> Pressione ENTER para retornar...  "))
                                 case 3:
                                     menu.limpar_terminal()
                                     menu.mostrar_vot_partido()
                                     resultados = mod_vot.calcular_votos_por_partido()
 
                                     for linha in resultados:
-                                        print(f"Partido {linha['partido']}: {linha['total_votos']} voto(s)")
+                                        print(f"Partido {linha['partido_candidato']}: {linha['total_votos']} voto(s)")
+
+                                    input(cor.amarelo("\n>> Pressione ENTER para retornar...  "))
                                 case 4:
                                     menu.limpar_terminal()
                                     menu.mostrar_vot_integridade()
@@ -447,10 +456,13 @@ while (op_mod != 0):
                                         msg.sucesso("Votação Íntegra!")
                                         msg.sucesso("Total de votos: %d | Total Eleitores Ja Votou: %d" 
                                                     % (resultado["total_votos"], resultado["total_eleitores"]))
+                                        
+                                        input(cor.amarelo("\n>> Pressione ENTER para retornar...  "))
                                     else:
                                         msg.erro("Votação Inconsistente!")
                                         msg.erro("Total de votos: %d | Total Eleitores Ja Votou: %d" 
                                                     % (resultado["total_votos"], resultado["total_eleitores"]))
+                                        input(cor.amarelo("\n>> Pressione ENTER para retornar...  "))
                                     
                                 case 0:
                                     menu.loading("Retornando ao menu anterior...",1.5)

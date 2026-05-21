@@ -64,16 +64,22 @@ def registrar_voto(id_eleitor, numero_candidato):
     if candidato:
         print(f"\nCandidato: {candidato['nome_candidato']} | Partido: {candidato['partido_candidato']}")
         id_candidato_db = candidato['id_candidato']
-    else:
-        msg.alerta("Candidato inexistente! Seu voto será computado como NULO.")
-        id_candidato_db = None
     
-    confirma = input(f"Confirma o voto no número {numero_candidato}? (S/N): ").upper()
-
+    else: 
+        resp = input("Número não corresponde a nenhum candidato. Deseja votar NULO? (S/N): ").upper()
+        id_candidato_db = None
+        if resp != 'S':
+            msg.alerta("Voto cancelado. Retornando à inserção de número...")
+            time.sleep(1.5)
+            return "REPETIR"
+        
+    confirma = input(f"\nConfirma o voto no número {numero_candidato}? (S/N): ").upper()
     if confirma != 'S':
-        msg.alerta("Voto cancelado. Retornando à inserção de número...")
-        time.sleep(1.5)
-        return "REPETIR"
+            msg.alerta("Voto cancelado. Retornando à inserção de número...")
+            time.sleep(1.5)
+            return "REPETIR"
+           
+    
 
     protocolo = gerar_protocolo(numero_candidato)
     protocolo_cifra = cripto.cifrar(protocolo)
@@ -259,6 +265,7 @@ def encerrar_votacao(titulo, primeiros_cpf, chave):
     chave_conf = input("Confirme sua chave para fechar a urna: ").strip()
     if chave_conf != chave:
         msg.erro("Chave incorreta para encerramento.")
+        time.sleep(1.5)
         return False
 
     return True
@@ -329,6 +336,7 @@ def exibir_protocolos():
 
     except Error as erro:
         msg.erro(f"Erro ao exibir protocolos: {erro}")
+        time.sleep(1.5)
         return False
 
     finally:
@@ -351,6 +359,7 @@ def boletim_urna():
 
     if not resultados:
         msg.alerta("Nenhum resultado encontrado.")
+        time.sleep(1.5)
         return False
 
     # print(cor.magenta("\n█▓▒▒░░░    BOLETIM DE URNA    ░░░▒▒▓█\n"))
@@ -380,6 +389,7 @@ def declarar_vencedor():
 
     if not resultados:
         msg.alerta("Nenhum resultado encontrado.")
+        time.sleep(1.5)
         return False
 
     maior_votos = 0
@@ -390,6 +400,7 @@ def declarar_vencedor():
 
     if maior_votos == 0:
         msg.alerta("Nenhum voto registrado. Não há vencedor.")
+        time.sleep(1.5)
         return False
 
     empatados = []
@@ -443,10 +454,10 @@ def calcular_votos_por_partido():
         cursor = conexao.cursor(dictionary=True)
         
         query = """
-            SELECT partido_candidato, COUNT(id_voto) AS total_votos
-            FROM votos 
-            JOIN candidatos ON id_candidato = id_candidato
-            GROUP BY partido_candidato
+            SELECT c.partido_candidato, COUNT(v.id_voto) AS total_votos
+            FROM votos v
+            JOIN candidatos c ON v.id_candidato = c.id_candidato
+            GROUP BY c.partido_candidato
             ORDER BY total_votos DESC
         """
         
@@ -508,6 +519,7 @@ def calcular_estatisticas_comparecimento():
 
     except Exception as e:
         print(f"Erro ao calcular estatísticas de comparecimento: {e}")
+        time.sleep(1.5)
         return None
     finally:
         if 'cursor' in locals() and cursor:
