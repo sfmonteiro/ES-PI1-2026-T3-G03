@@ -57,8 +57,23 @@ def registrar_voto(id_eleitor, numero_candidato):
     Returns:
         Número de protocolo.
     """
-        
-    candidato = bd.listar_candidatos_numero(numero_candidato)
+    
+    numero_str = str(numero_candidato).strip()
+
+    # Se apertou Enter vazio
+    if numero_str == "":
+        candidato = None
+
+    # Se digitou letras ou caracteres inválidos
+    elif not numero_str.isdigit():
+        msg.alerta("Digite apenas números.")
+        time.sleep(1.5)
+        return "REPETIR"
+
+    # Se digitou um número válido
+    else:
+        numero_candidato = int(numero_str)
+        candidato = bd.listar_candidatos_numero(numero_candidato)
 
 
     if candidato:

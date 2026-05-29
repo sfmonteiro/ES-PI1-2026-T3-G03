@@ -301,13 +301,12 @@ while (op_mod != 0):
         
                                     while not votacao_concluida:
                                         if resultado["sucesso"]:
-                                            msg.sucesso(resultado["mensagem"])
                                             id_eleitor = resultado["id_eleitor"]
 
                                             menu.limpar_terminal()
                                             menu.mostrar_vot_votacao()
 
-                                            numero_candidato = int(input("\nDigite o número do seu candidato: ").strip())
+                                            numero_candidato = input("\nDigite o número do seu candidato: ").strip()
                 
                                             protocolo = mod_vot.registrar_voto(id_eleitor, numero_candidato)
                 
@@ -346,7 +345,7 @@ while (op_mod != 0):
                                     resultado = mod_vot.encerrar_votacao(titulo, primeiros_cpf, chave)
 
                                     if resultado:
-                                        msg.sucesso("Sistema de votação encerrado com sucesso.")
+                                        # msg.sucesso("Sistema de votação encerrado com sucesso.")
                                         logs.encerramento(arquivo_log)
 
                                         menu.limpar_terminal()
@@ -430,8 +429,12 @@ while (op_mod != 0):
                                     menu.mostrar_vot_partido()
                                     resultados = mod_vot.calcular_votos_por_partido()
 
-                                    for linha in resultados:
-                                        print(f"Partido {linha['partido_candidato']}: {linha['total_votos']} voto(s)")
+
+                                    if not resultados:
+                                        msg.alerta("Nenhum voto foi registrado até o momento.")
+                                    else:
+                                        for linha in resultados:
+                                            print(f"Partido {linha['partido_candidato']}: {linha['total_votos']} voto(s)")
 
                                     input(cor.amarelo("\n>> Pressione ENTER para retornar...  "))
                                 case 4:
