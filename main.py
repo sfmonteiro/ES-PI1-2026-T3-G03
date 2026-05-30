@@ -12,7 +12,6 @@ from funcoes import mod_ger
 from funcoes import cripto
 from funcoes import mod_vot
 import time
-from getpass import getpass
 
 #===================================================================================================================
 #                                                     MAIN
@@ -22,6 +21,7 @@ from getpass import getpass
 menu.limpar_terminal()
 menu.mostrar_inicio()
 input(cor.amarelo(">> Pressione ENTER para iniciar o programa LAD.PY...  "))
+arquivo_log = None
 
 #=================== MENU MODULO INICIAL ====================
 op_mod = -1
@@ -327,8 +327,15 @@ while (op_mod != 0):
                                                 msg.erro("Erro crítico ao registrar o voto.")
                                                 menu.loading("Retornando ao menu anterior...",2)
                                                 votacao_concluida = True
-                
+
+                                #=================== ENCERRAR VOTAÇÃO ====================
                                 case 2:
+                                    if not arquivo_log:
+                                        menu.limpar_terminal()
+                                        menu.mostrar_vot_votacao()
+                                        msg.erro("Nenhuma votação foi aberta ainda.")
+                                        menu.loading("Retornando ao menu anterior...", 1.5)
+                                        continue
                                     menu.limpar_terminal()
                                     menu.mostrar_vot_encerrar()
                                     
@@ -351,7 +358,7 @@ while (op_mod != 0):
                                         menu.limpar_terminal()
                                         menu.mostrar_vot_encerrar()
                                         menu.loading("Liberando módulos de Auditoria e Resultados...",1.5)
-                                        input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
+                                        input(cor.amarelo(">> Pressione ENTER para acessar...  "))
                                         break
                                     else:
                                         msg.erro("Falha ao encerrar votação.")
@@ -365,7 +372,13 @@ while (op_mod != 0):
 
                     #=================== AUDITORIA ====================
                     case 2:
-                        
+                        if not arquivo_log:
+                            menu.limpar_terminal()
+                            menu.mostrar_vot_votacao()
+                            msg.erro("Nenhuma votação foi aberta ainda.")
+                            menu.loading("Retornando ao menu anterior...", 1.5)
+                            continue
+
                         op_auditoria = -1
                         while (op_auditoria != 0):
                             menu.limpar_terminal()
@@ -391,7 +404,13 @@ while (op_mod != 0):
 
                     #=================== RESULTADO ====================
                     case 3:
-                        
+                        if not arquivo_log:
+                            menu.limpar_terminal()
+                            menu.mostrar_vot_votacao()
+                            msg.erro("Nenhuma votação foi aberta ainda.")
+                            menu.loading("Retornando ao menu anterior...", 1.5)
+                            continue
+
                         op_resultado = -1
 
                         while (op_resultado != 0):
@@ -413,7 +432,7 @@ while (op_mod != 0):
 
                                     if estatisticas:
                                         
-                                        print("\n" + "="*40)
+                                        print("" + "="*40)
                                         print("      ESTATÍSTICAS DE COMPARECIMENTO      ")
                                         print("="*40)
                                         print(f"Total de Eleitores Aptos: {estatisticas['total']}")
@@ -421,7 +440,7 @@ while (op_mod != 0):
                                         print(f"Abstenções (Faltaram)    : {estatisticas['ausentes']}")
                                         print("-" * 40)
                                         print(f"Taxa de Participação     : {estatisticas['percentual']}%")
-                                        print("="*40 + "\n")
+                                        print("="*40 + "")
 
                                         input(cor.amarelo("\n>> Pressione ENTER para retornar...  "))
                                 case 3:
@@ -432,6 +451,7 @@ while (op_mod != 0):
 
                                     if not resultados:
                                         msg.alerta("Nenhum voto foi registrado até o momento.")
+                                        input(cor.amarelo("\n>> Pressione ENTER para retornar...  "))
                                     else:
                                         for linha in resultados:
                                             print(f"Partido {linha['partido_candidato']}: {linha['total_votos']} voto(s)")

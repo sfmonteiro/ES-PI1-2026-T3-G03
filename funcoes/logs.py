@@ -18,36 +18,6 @@ def agora():
     """
     return datetime.datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")    
 
-# def inicializar_logs():
-#     """
-#     Cria um novo arquivo de log com nome disponível (logs{i}.txt),
-#     evitando sobrescrever arquivos existentes.
-
-#     Args:
-#         Nenhum.
-
-#     Returns:
-#         str: Nome do arquivo criado.
-#     """
-
-#     contador = 1
-#     nome_arquivo = f"logs{contador}.txt"
-
-#     while os.path.exists(nome_arquivo):
-#         contador += 1
-
-#     nome_arquivo = f"logs{contador}.txt"
-
-#     with open(nome_arquivo, "w", encoding="utf-8") as arq:
-#         arq.write("""╔════════════════════════════════════════════════════╗
-# ║        LAD.PY | LOG DE OCORRÊNCIAS CRÍTICAS        ║
-# ╚════════════════════════════════════════════════════╝
-# """)
-
-#     msg.sucesso(f"\nArquivo {nome_arquivo} criado com sucesso!")
-
-#     return nome_arquivo
-
 def criar_arq():
     """
     Cria um novo arquivo de log em branco com nome disponível (logs{i}.txt).

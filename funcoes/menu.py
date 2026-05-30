@@ -2,7 +2,6 @@
 #                                                 BIBLIOTECAS
 #===================================================================================================================
 
-import sys
 from funcoes import msg
 from funcoes import cor
 import os
@@ -60,37 +59,23 @@ def limpar_terminal():
     """
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def loading(msg, duracao):
+def loading(msg: str, duracao: float) -> None:
     """
     Exibe uma animação de loading no terminal com spinner estilo "canto de círculo".
 
     Args:
         msg (str): Mensagem exibida ao lado do spinner.
         duracao (float): Tempo total de execução da animação em segundos.
-
-    A animação usa caracteres Unicode para simular um movimento circular.
-    A linha é atualizada no terminal sem quebrar linha.
     """
-    frames = [
-        "◜",
-        "◝",
-        "◞",
-        "◟"
-    ]
-
+    frames = ["◜", "◝", "◞", "◟"]
     fim = time.time() + duracao
 
     while time.time() < fim:
         for frame in frames:
-            sys.stdout.write(
-                f"\r{cor.amarelo(frame)}  {cor.amarelo(msg)}"
-            )
-            sys.stdout.flush()
+            print(f"\r{cor.amarelo(frame)}  {cor.amarelo(msg)}", end="", flush=True)
             time.sleep(0.07)
 
-    # limpa a linha no final
-    sys.stdout.write("\r" + " " * (len(msg) + 5) + "\r")
-    sys.stdout.flush()
+    print("\r" + " " * (len(msg) + 5) + "\r", end="", flush=True)
 
 
 #===================================================================================================================
@@ -241,7 +226,15 @@ def mostrar_ger_eleitores_cadastrados():
 #===================================================================================================================
 
 def mostrar_vot():
-    
+    """
+    Exibe o menu principal do módulo de Votação.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
     print(f"""
 {cor.verde("""╔══════════════════════════════════════════╗
 ║                 VOTAÇÃO                  ║
@@ -254,15 +247,30 @@ def mostrar_vot():
 """)
     
 def mostrar_vot_abertura():
-    
+    """
+    Exibe o cabeçalho da tela de abertura da votação.
+
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
     print(f"""
 {cor.verde("""╔══════════════════════════════════════════╗
 ║           ABERTURA DA VOTAÇÃO            ║
-╚══════════════════════════════════════════╝
-""")}""")
+╚══════════════════════════════════════════╝""")}""")
 
 def mostrar_vot_menu_votacao():
+    """
+    Exibe o menu da urna durante a votação aberta.
 
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
     print(f"""
 {cor.verde("""╔══════════════════════════════════════════╗
 ║                 VOTAÇÃO                  ║
@@ -273,15 +281,30 @@ def mostrar_vot_menu_votacao():
 """)
     
 def mostrar_vot_votacao():
+    """
+    Exibe o cabeçalho da tela de votação do eleitor.
 
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
     print(f"""
 {cor.verde("""╔══════════════════════════════════════════╗
 ║                 VOTAÇÃO                  ║
-╚══════════════════════════════════════════╝
-""")}""")
+╚══════════════════════════════════════════╝""")}""")
     
 def mostrar_vot_encerrar():
+    """
+    Exibe o cabeçalho da tela de encerramento da votação.
 
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
     print(f"""
 {cor.verde("""╔══════════════════════════════════════════╗
 ║         ENCERRAMENTO DA VOTAÇÃO          ║
@@ -289,7 +312,15 @@ def mostrar_vot_encerrar():
 """)}""")
     
 def mostrar_vot_logs():
+    """
+    Exibe o cabeçalho da tela de logs de ocorrências críticas.
 
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
     print(f"""
 {cor.ciano("""╔══════════════════════════════════════════╗
 ║       LOGS DE OCORRÊNCIAS CRÍTICAS       ║
@@ -297,7 +328,15 @@ def mostrar_vot_logs():
 """)}""")
 
 def mostrar_vot_protocolo():
+    """
+    Exibe o cabeçalho da tela de protocolos da votação.
 
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
     print(f"""
 {cor.ciano("""╔══════════════════════════════════════════╗
 ║          PROTOCOLOS DA VOTAÇÃO           ║
@@ -305,7 +344,15 @@ def mostrar_vot_protocolo():
 """)}""")
 
 def mostrar_vot_auditoria():
+    """
+    Exibe o menu de auditoria do sistema de votação.
 
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
     print(f"""
 {cor.ciano("""╔══════════════════════════════════════════╗
 ║                AUDITORIA                 ║
@@ -317,7 +364,15 @@ def mostrar_vot_auditoria():
 """)
 
 def mostrar_vot_resultado_menu():
+    """
+    Exibe o menu de resultados da votação.
 
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
     print(f"""
 {cor.ciano("""╔══════════════════════════════════════════╗
 ║           RESULTADO DA VOTAÇÃO           ║
@@ -331,23 +386,31 @@ def mostrar_vot_resultado_menu():
 """)
     
 def mostrar_vot_boletim():
+    """
+    Exibe o cabeçalho da tela de boletim de urna.
 
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
     print(f"""
 {cor.ciano("""╔══════════════════════════════════════════╗
 ║              BOLETIM DE URNA             ║
-╚══════════════════════════════════════════╝""")}""")
-    
-# def mostrar_vot_vencedor():
-
-#     print(f"""
-# {cor.magenta("""╔═══════════════════════════════╗
-# ║      VENCEDOR DA VOTAÇÃO      ║
-# ╚═══════════════════════════════╝
-# """)}
-# """)
+╚══════════════════════════════════════════╝
+""")}""")
     
 def mostrar_vot_partido():
+    """
+    Exibe o cabeçalho da tela de votos por partido.
 
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
     print(f"""
 {cor.ciano("""╔══════════════════════════════════════════╗
 ║            VOTOS POR PARTIDO             ║
@@ -355,7 +418,15 @@ def mostrar_vot_partido():
 """)}""")
     
 def mostrar_vot_estatisticas():
+    """
+    Exibe o cabeçalho da tela de estatísticas de comparecimento.
 
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
     print(f"""
 {cor.ciano("""╔══════════════════════════════════════════╗
 ║     ESTASTÍSTICAS DE COMPARECIMENTO      ║
@@ -363,7 +434,15 @@ def mostrar_vot_estatisticas():
 """)}""")
     
 def mostrar_vot_integridade():
+    """
+    Exibe o cabeçalho da tela de validação da integridade dos votos.
 
+    Args:
+        Nenhum.
+
+    Returns:
+        None.
+    """
     print(f"""
 {cor.ciano("""╔══════════════════════════════════════════╗
 ║    VALIDAÇÃO DA INTEGRIDADE DOS VOTOS    ║

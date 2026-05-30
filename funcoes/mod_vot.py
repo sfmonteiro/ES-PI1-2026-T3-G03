@@ -4,7 +4,7 @@ import time
 
 from mysql.connector import Error
 
-from funcoes import cor
+from funcoes import cor, menu
 from . import bd
 from . import cripto
 from . import logs
@@ -75,23 +75,25 @@ def registrar_voto(id_eleitor, numero_candidato):
         numero_candidato = int(numero_str)
         candidato = bd.listar_candidatos_numero(numero_candidato)
 
-
     if candidato:
         print(f"\nCandidato: {candidato['nome_candidato']} | Partido: {candidato['partido_candidato']}")
+        print(f"\nConfirma o voto no número {numero_candidato}?")
+        print(cor.verde("\n[1] SIM"))
+        print(cor.vermelho("[2] NÃO\n"))
+        confirma = menu.selecionar_opcao()
+        if confirma != 1:
+            menu.loading("Voto cancelado. Retornando à inserção de número...", 1.5)
+            return "REPETIR"
         id_candidato_db = candidato['id_candidato']
-        confirma = input(f"\nConfirma o voto no número {numero_candidato}? (S/N): ").upper()
-        if confirma != 'S':
-            msg.alerta("Voto cancelado. Retornando à inserção de número...")
-            time.sleep(1.5)
-            return "REPETIR"
-    else: 
-        resp = input("Número não corresponde a nenhum candidato. Deseja votar NULO? (S/N): ").upper()
+    else:
+        print("\nNúmero não corresponde a nenhum candidato. Deseja votar NULO?")
+        print(cor.verde("\n[1] SIM"))
+        print(cor.vermelho("[2] NÃO\n"))
+        resp = menu.selecionar_opcao()
         id_candidato_db = None
-        if resp != 'S':
-            msg.alerta("Voto cancelado. Retornando à inserção de número...")
-            time.sleep(1.5)
+        if resp != 1:
+            menu.loading("Voto cancelado. Retornando à inserção de número...", 1.5)
             return "REPETIR"
-    
 
     protocolo = gerar_protocolo(numero_candidato)
     protocolo_cifra = cripto.cifrar(protocolo)
@@ -202,8 +204,6 @@ def autenticar_mesario(titulo, primeiros_cpf, chave_acesso_input):
         # compara os 4 primeiros dígitos do CPF e a chave de acesso
         if cpf_real[:4] != primeiros_cpf or chave_real != chave_acesso_input:
             return {"sucesso": False, "mensagem": "Dados de identificação inválidos."}
-        
-
 
         # Se passou por tudo, identificação bem-sucedida
         return {
@@ -263,18 +263,40 @@ def encerrar_votacao(titulo, primeiros_cpf, chave):
     # AUTENTICAÇÃO
     # ==========================
     
-    resultado = autenticar_mesario(titulo, primeiros_cpf, chave)
+    # resultado = autenticar_mesario(titulo, primeiros_cpf, chave)
     
+    # if not resultado["sucesso"] or not resultado['is_mesario']:
+    #     msg.erro("Falha na autenticação ou usuário não é mesário.")
+    #     return False
+
+    # confirma = input("Deseja realmente encerrar a votação? (Sim/Não): ").strip().lower()
+    # if confirma != "sim":
+    #     return False
+
+    # # Dupla confirmação da chave 
+    # chave_conf = input("Confirme sua chave para fechar a urna: ").strip()
+    # if chave_conf != chave:
+    #     msg.erro("Chave incorreta para encerramento.")
+    #     time.sleep(1.5)
+    #     return False
+
+    # return True
+
+    resultado = autenticar_mesario(titulo, primeiros_cpf, chave)
+
     if not resultado["sucesso"] or not resultado['is_mesario']:
         msg.erro("Falha na autenticação ou usuário não é mesário.")
         return False
 
-    confirma = input("Deseja realmente encerrar a votação? (Sim/Não): ").strip().lower()
-    if confirma != "sim":
+    print("\nDeseja realmente encerrar a votação?")
+    print(cor.verde("\n[1] SIM"))
+    print(cor.vermelho("[2] NÃO"))
+    confirma = menu.selecionar_opcao()
+    if confirma != 1:
         return False
 
-    # Dupla confirmação da chave 
-    chave_conf = input("Confirme sua chave para fechar a urna: ").strip()
+    # Dupla confirmação da chave
+    chave_conf = input("\nConfirme sua chave para fechar a urna: ").strip()
     if chave_conf != chave:
         msg.erro("Chave incorreta para encerramento.")
         time.sleep(1.5)

@@ -2,6 +2,8 @@
 #                           BIBLIOTECAS
 # =====================================================================
 
+import time
+
 import mysql.connector
 from mysql.connector import Error, IntegrityError
 from funcoes import mod_ger, msg, cripto
@@ -176,43 +178,6 @@ def insert_voto(id_candidato, protocolo):
 #                            2. READ
 # =====================================================================
 
-# def listar_chaves_existente(chave_acesso):
-#     """
-#     Lista todas as chaves de acesso dos eleitores cadastrados no banco de dados.
-
-#     Args:
-#         chave_acesso (str): A chave de acesso a ser pesquisada.
-
-#     Returns:
-#         list: Lista de tuplas com os dados dos eleitores que possuem a chave de acesso especificada.
-#         None: Se houver algum erro na consulta.
-#     """
-#     conexao = conectar()
-#     if not conexao:
-#         return False
-
-#     try:
-#         cursor = conexao.cursor()
-
-#         query = """
-#         SELECT *
-#         FROM eleitores
-#         WHERE chave_acesso = %s
-#         """
-#         cursor.execute(query, (chave_acesso,))
-#         eleitores = cursor.fetchall()
-#         return eleitores
-
-#     except Error as erro:
-#         msg.alerta(f"Erro ao listar chaves existentes: {erro}")
-#         return None
-
-#     finally:
-#         if cursor:
-#             cursor.close()
-#         if conexao and conexao.is_connected():
-#             conexao.close()
-
 def listar_candidatos():
     """
     Lista todos os candidatos cadastrados no banco de dados,
@@ -379,7 +344,6 @@ def editar_eleitor(valor_busca, novos_dados):
 
     A função identifica o tipo pela quantidade de dígitos informado:
     11 dígitos para CPF e 12 dígitos para título de eleitor.
-    Se o nome for alterado, gera uma nova chave de acesso.
 
     Args:
         valor_busca (str): CPF ou título de eleitor usado para localizar o eleitor.
@@ -438,6 +402,7 @@ def editar_eleitor(valor_busca, novos_dados):
 
         if not campos:
             msg.alerta("Nada para atualizar.")
+            time.sleep(1.5)
             return False
 
         valores.append(valor_cripto)
@@ -452,10 +417,12 @@ def editar_eleitor(valor_busca, novos_dados):
         conexao.commit()
 
         if cursor.rowcount > 0:
-            msg.sucesso("Eleitor atualizado com sucesso!")
+            msg.sucesso("Informações do eleitor atualizadas com sucesso!")
+            time.sleep(1.5)
             return True
 
         msg.alerta("Nenhuma alteração realizada.")
+        time.sleep(1.5)
         return False
 
     except Error as erro:
@@ -493,10 +460,10 @@ def editar_status_voto(id_eleitor):
         )
         conexao.commit()
         if cursor.rowcount > 0:
-            msg.sucesso("Eleitor atualizado com sucesso!")
             return True
 
         msg.alerta("Nenhuma alteração realizada.")
+        time.sleep(1.5)
         return False
 
     except Error as erro:
@@ -546,6 +513,7 @@ def remover_eleitor(valor_busca):
             campo_busca = "titulo_eleitor"
         else:
             msg.erro("CPF ou título de eleitor inválido. Quantidade de dígitos incorreta.")
+            time.sleep(1.5)
             return False
         
         valor_cripto = cripto.cifrar(valor_limpo)
@@ -560,9 +528,11 @@ def remover_eleitor(valor_busca):
 
         if cursor.rowcount > 0:
             msg.sucesso("Eleitor removido com sucesso!")
+            time.sleep(1.5)
             return True
 
         msg.alerta("Nenhum eleitor encontrado com os dados informados.")
+        time.sleep(1.5)
         return False
 
     except Error as erro:
@@ -616,74 +586,6 @@ def zerezima_bd():
             cursor.close()
         if conexao and conexao.is_connected():
             conexao.close()  
-
-def listar_votos():
-    """
-    Lista todos os candidatos com a quantidade de votos recebidos.
-
-    Args:
-        Nenhum.
-
-    Returns:
-        list: Lista de dicionários com os candidatos e total de votos.
-        False: Caso haja erro de conexão.
-        None: Caso nenhum candidato esteja cadastrado.
-    """
-    conexao = conectar()
-
-    if not conexao:
-        return False
-    
-    cursor = None
-
-    try:
-        cursor = conexao.cursor(dictionary=True)
-
-        query = """
-        SELECT 
-            c.id_candidato,
-            c.numero_candidato,
-            c.nome_candidato,
-            c.partido_candidato,
-            COUNT(v.id_voto) AS total_votos
-        FROM candidatos c
-        LEFT JOIN votos v ON c.id_candidato = v.id_candidato
-        GROUP BY 
-            c.id_candidato,
-            c.numero_candidato,
-            c.nome_candidato,
-            c.partido_candidato
-        ORDER BY c.nome_candidato
-        """
-
-        cursor.execute(query)
-        votos = cursor.fetchall()
-
-        if not votos:
-            msg.alerta("Nenhum candidato cadastrado.")
-            return None
-
-        print(cor.magenta("\n█▓▒▒░░░    LISTAGEM DE VOTOS    ░░░▒▒▓█\n"))
-
-        for voto in votos:
-            print(
-                f"[{voto['numero_candidato']}] "
-                f"{voto['nome_candidato']} | "
-                f"{voto['partido_candidato']} | "
-                f"Votos: {voto['total_votos']}"
-            )
-        
-        return True
-    
-    except Error as erro:
-        msg.erro(f"Erro no banco {erro}")
-        return False
-    
-    finally:
-        if cursor:
-            cursor.close()
-        if conexao and conexao.is_connected():
-            conexao.close()
 
 # =====================================================================
 #                     6. APOIO AO MÓDULO DE RESULTADOS

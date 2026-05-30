@@ -8,8 +8,6 @@ from funcoes import cor
 from funcoes import msg
 import random
 
-
-
 def validar_nome(nome):
         if nome == "" or len(nome.split()) < 2 or any(char.isdigit() for char in nome):
             return False
@@ -26,19 +24,6 @@ def input_voltar():
     else:
         return False
     
-
-# ====FUNÇAO PRA CASO PERMITIR O USUARIO A CANCELAR O CADASTRO DURANTE O PROCESSO E VOLTAR PARA O MENU
-# def tentar_voltar(opcao):  
-#     if opcao == "0":
-#         return True
-#     return False
-#                     opcao_voltar = input(f"\n>> Digite {cor.vermelho("[0] para voltar ao menu")}, ou {cor.amarelo("qualquer tecla")} para tentar novamente...  ").strip()
-#                     if tentar_voltar(opcao_voltar):
-#                         return None
-# MAIN::                    if dict_cadastro is None:
-                            # msg.alerta("Voltando para o menu anterior...")
-                            # continue
-
 #===================================================================================================================
 
 def menu_cad_eleitor ():
