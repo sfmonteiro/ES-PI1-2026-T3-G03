@@ -8,7 +8,6 @@ from funcoes import msg
 from funcoes import cor
 from funcoes import logs
 from funcoes import bd
-from funcoes import mod_ger
 from funcoes import cripto
 from funcoes import mod_vot
 import time

@@ -9,7 +9,6 @@ from mysql.connector import Error, IntegrityError
 from funcoes import mod_ger, msg, cripto
 from dotenv import load_dotenv
 import os
-import mysql.connector
 from funcoes import cor
 from funcoes import menu
 
@@ -108,7 +107,6 @@ def cadastrar_eleitor(nome, titulo, cpf, is_mesario):
                 continue # volta para o início e gera nova chave
             else:
                 # se o erro for CPF ou Título, para o processo
-                menu.mostrar_ger_cad_eleitores
                 msg.erro("Erro: CPF ou Título já cadastrado no sistema.")
                 tentando_cadastrar = False
                 return False
@@ -232,6 +230,8 @@ def listar_candidatos_numero(numero_candidato):
         Candidato referente ao número indicado ou None se não encontrar
     """
     candidatos = listar_candidatos()
+    if not candidatos:
+        return None
     for candidato in candidatos:
         if candidato['numero_candidato'] == numero_candidato:
             return candidato

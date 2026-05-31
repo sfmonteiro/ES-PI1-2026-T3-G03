@@ -222,7 +222,7 @@ def autenticar_mesario(titulo, primeiros_cpf, chave_acesso_input):
             conexao.close()
 
 def abrir_votacao(titulo, primeiros_cpf, chave, arquivo_log):
-    bd.zerezima_bd()
+
     resultado = autenticar_mesario(titulo, primeiros_cpf, chave)
 
     if not resultado['sucesso']:
@@ -236,12 +236,17 @@ def abrir_votacao(titulo, primeiros_cpf, chave, arquivo_log):
         logs.acesso_negado(arquivo_log)
         return False
     
-
     if not bd.zerezima_bd():
         return False
     
     logs.zerezima(arquivo_log)
     
+    msg.sucesso("Zerézima concluída! Total de votos de cada candidato:")
+    candidatos = bd.listar_resultados()
+    for candidato in candidatos:
+        print(f"[{candidato['numero_candidato']}] {candidato['nome_candidato']} | {candidato['partido_candidato']} | Votos: {candidato['total_votos']}")
+    
+    input(cor.amarelo("\n>> Pressione ENTER para continuar...  "))
     return arquivo_log
 
 
@@ -262,25 +267,6 @@ def encerrar_votacao(titulo, primeiros_cpf, chave):
     # ==========================
     # AUTENTICAÇÃO
     # ==========================
-    
-    # resultado = autenticar_mesario(titulo, primeiros_cpf, chave)
-    
-    # if not resultado["sucesso"] or not resultado['is_mesario']:
-    #     msg.erro("Falha na autenticação ou usuário não é mesário.")
-    #     return False
-
-    # confirma = input("Deseja realmente encerrar a votação? (Sim/Não): ").strip().lower()
-    # if confirma != "sim":
-    #     return False
-
-    # # Dupla confirmação da chave 
-    # chave_conf = input("Confirme sua chave para fechar a urna: ").strip()
-    # if chave_conf != chave:
-    #     msg.erro("Chave incorreta para encerramento.")
-    #     time.sleep(1.5)
-    #     return False
-
-    # return True
 
     resultado = autenticar_mesario(titulo, primeiros_cpf, chave)
 
